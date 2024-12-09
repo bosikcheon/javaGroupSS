@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="userNS">
+	
+	<!-- <select id="getUserList" resultType="com.spring.javaGroupS.vo.UserVO"> -->
+	<select id="getUserList" resultType="userVO">
+		select * from user order by idx desc;
+	</select>
+	
+	<!-- <select id="getUserIdxSearch" resultType="com.spring.javaGroupS.vo.UserVO"> -->
+	<select id="getUserIdxSearch" resultType="userVO">
+		select * from user where idx = #{idx};
+	</select>
+	
+	<select id="getUserIdSearch" resultType="userVO">
+		select * from user where mid = #{mid};
+	</select>
+	
+	<select id="getUserCnt" resultType="int">
+		select count(*) from user;
+	</select>
+	
+	<select id="getUserSearchList" resultType="userVO">
+		select * from user where mid like concat('%',#{mid},'%') order by idx desc;
+	</select>
+	
+	
+	<insert id="setUserInputOk" parameterType="userVO">
+	  insert into user values (default, #{mid}, #{pwd}, #{name}, #{age}, #{gender}, #{address});
+	</insert>
+	
+	
+	<update id="getUserUpdateOk" parameterType="userVO">
+	  update user set pwd=#{pwd}, name=#{name}, age=#{age}, gender=#{gender}, address=#{address} where idx=#{idx};
+	</update>
+	
+	
+	
+	<delete id="setUserDeleteOk">
+		delete from user where idx = #{idx};
+	</delete>
+	
+</mapper>
