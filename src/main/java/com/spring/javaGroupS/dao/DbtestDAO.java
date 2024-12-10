@@ -22,4 +22,6 @@ public interface DbtestDAO {
 
 	ArrayList<UserVO> getDbtestSearch(@Param("mid") String mid);
 
+	ArrayList<String> getDbtestMidList();
+
 }

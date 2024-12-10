@@ -27,11 +27,15 @@ public class DbtestController {
 	
 	@RequestMapping("/dbtestInputOk")
 	public String dbtestInputOkGet(UserVO vo) {
+		UserVO vo2 = dbtestService.getDbtestIdCheckForm(vo.getMid());
+		if(vo2 != null) return "redirect:/message/dbtestMidDuplication";
+		
 		int res = dbtestService.setDbtestInputOk(vo);
 		if(res != 0) return "redirect:/message/dbtestInputOk";
 		else return "redirect:/message/dbtestInputNo";
 	}
 	
+	// 아이디 중복체크
 	@RequestMapping("/dbtestIdCheckForm")
 	public String dbtestInputOkGet(Model model, String mid) {
 		UserVO vo = dbtestService.getDbtestIdCheckForm(mid);

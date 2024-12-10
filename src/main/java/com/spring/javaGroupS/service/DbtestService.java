@@ -18,4 +18,6 @@ public interface DbtestService {
 
 	ArrayList<UserVO> getDbtestSearch(String mid);
 
+	ArrayList<String> getDbtestMidList();
+
 }

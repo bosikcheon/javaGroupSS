@@ -14,7 +14,7 @@
       <div class="w3-dropdown-content w3-bar-block w3-card-4">
         <a href="${ctp}/user/userMain" class="w3-bar-item w3-button">UserList</a>
         <a href="${ctp}/dbtest/dbtestList" class="w3-bar-item w3-button">DB Test</a>
-        <a href="#" class="w3-bar-item w3-button">Ajax Test</a>
+        <a href="${ctp}/study/ajax/ajaxForm" class="w3-bar-item w3-button">Ajax Test</a>
       </div>
     </div>
     <div class="w3-dropdown-hover w3-hide-small">

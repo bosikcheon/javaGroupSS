@@ -1,0 +1,16 @@
+@charset "UTF-8";
+#userInputTable th {
+  text-align: center;
+  background-color: #eee;
+}
+#userInputTable td {
+  padding: 12px 20px !important;
+}
+#userTable th {
+  text-align: center;
+  background-color: #eee;
+}
+#userTable th, td {
+  padding: 12px 20px !important;
+}
+

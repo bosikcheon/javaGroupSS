@@ -90,6 +90,38 @@ public class MessageController {
 			model.addAttribute("message", "회원 수정 실패");
 			model.addAttribute("url", "/dbtest/dbtestList");
 		}
+		else if(msgFlag.equals("dbtestMidDuplication")) {
+			model.addAttribute("message", "아이디가 중복되었습니다.\\n새로운 아이디를 입력하세요");
+			model.addAttribute("url", "/dbtest/dbtestList");
+		}
+		else if(msgFlag.equals("guestInputOk")) {
+			model.addAttribute("message", "방명록에 글이 등록 되었습니다.");
+			model.addAttribute("url", "/guest/guestList");
+		}
+		else if(msgFlag.equals("guestInputNo")) {
+			model.addAttribute("message", "방명록 글 등록 실패");
+			model.addAttribute("url", "/guest/guestInput");
+		}
+		else if(msgFlag.equals("adminOk")) {
+			model.addAttribute("message", "관리자 인증에 성공하셨습니다.");
+			model.addAttribute("url", "/guest/guestList");
+		}
+		else if(msgFlag.equals("adminNo")) {
+			model.addAttribute("message", "관리자 인증 실패");
+			model.addAttribute("url", "/guest/guestList");
+		}
+		else if(msgFlag.equals("adminOut")) {
+			model.addAttribute("message", "관리자 로그아웃");
+			model.addAttribute("url", "/guest/guestList");
+		}
+		else if(msgFlag.equals("guestDeleteOk")) {
+			model.addAttribute("message", "방명록의 글이 삭제 되었습니다.");
+			model.addAttribute("url", "/guest/guestList");
+		}
+		else if(msgFlag.equals("guestDeleteNo")) {
+			model.addAttribute("message", "방명록의 글 삭제 실패~~");
+			model.addAttribute("url", "/guest/guestList");
+		}
 		
 		
 		

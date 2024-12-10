@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.spring.javaGroupS.dao.DbtestDAO">
 
-	<select id="getDbtestList" resultType="com.spring.javaGroupS.vo.UserVO">
-	<!-- <select id="getDbtestList" resultType="userVO"> -->
+	<!-- <select id="getDbtestList" resultType="com.spring.javaGroupS.vo.UserVO"> -->
+	<select id="getDbtestList" resultType="userVO">
 		select * from user order by idx desc;
 	</select>
 	
@@ -13,6 +13,10 @@
 	
 	<select id="getDbtestSearch" resultType="com.spring.javaGroupS.vo.UserVO">
 		select * from user where mid like concat('%',#{mid},'%');
+	</select>
+	
+	<select id="getDbtestMidList" resultType="String">
+		select mid from user order by mid;
 	</select>
 
 

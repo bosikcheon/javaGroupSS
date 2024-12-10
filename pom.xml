@@ -181,8 +181,43 @@
 	    <artifactId>mybatis-spring</artifactId>
 	    <version>2.1.2</version>
 		</dependency>
+		
+		<!-- AJax를 위한 라이브러리(2개) + JSon데이터철(jacson-databind) -->
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+		<dependency>
+	    <groupId>com.fasterxml.jackson.core</groupId>
+	    <artifactId>jackson-databind</artifactId>
+	    <version>2.18.1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
+		<dependency>
+	    <groupId>com.fasterxml.jackson.core</groupId>
+	    <artifactId>jackson-core</artifactId>
+	    <version>2.18.1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations -->
+		<dependency>
+	    <groupId>com.fasterxml.jackson.core</groupId>
+	    <artifactId>jackson-annotations</artifactId>
+	    <version>2.18.1</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.codehaus.jackson/jackson-mapper-asl -->
+		<dependency>
+	    <groupId>org.codehaus.jackson</groupId>
+	    <artifactId>jackson-mapper-asl</artifactId>
+	    <version>1.9.13</version>
+		</dependency>
 
-
+		<!-- 자바 String객체를 JSON객체로 변환하기위한 라이브러리 -->
+		<!-- https://mvnrepository.com/artifact/net.sf.json-lib/json-lib -->
+		<dependency>
+	    <groupId>net.sf.json-lib</groupId>
+	    <artifactId>json-lib</artifactId>
+	    <version>2.4</version>
+	    <classifier>jdk15</classifier>
+		</dependency>
+		
 		
 		
 		

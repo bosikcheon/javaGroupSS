@@ -43,6 +43,11 @@ public class DbtestServiceImpl implements DbtestService {
 	public ArrayList<UserVO> getDbtestSearch(String mid) {
 		return dbtestDAO.getDbtestSearch(mid);
 	}
+
+	@Override
+	public ArrayList<String> getDbtestMidList() {
+		return dbtestDAO.getDbtestMidList();
+	}
 	
 	
 }
