@@ -1,5 +1,6 @@
 package com.spring.javaGroupS.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,11 @@ public class GuestServiceImpl implements GuestService {
 	@Override
 	public int getTotRecCnt() {
 		return guestDAO.getTotRecCnt();
+	}
+
+	@Override
+	public ArrayList<GuestVO> getGuestMidList(String nickName) {
+		return guestDAO.getGuestMidList(nickName);
 	}
 	
 }

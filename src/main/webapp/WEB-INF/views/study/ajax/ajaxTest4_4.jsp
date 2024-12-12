@@ -40,7 +40,7 @@
   <h2>AJax활용한 DB자료처리</h2>
   <hr/>
   <form>
-    <h3>아이디를 선택하세요</h3>
+    <h3>아이디를 선택하세요(String로 가져오기)</h3>
     <select name="mid" id="mid" onchange="midCheck()">
       <option value="">아이디선택</option>
       <c:forEach var="mid" items="${midVos}" varStatus="st">
@@ -49,7 +49,31 @@
     </select>
     <hr/>
     <div id="demo"></div>
+    <hr/>
+    
+    <h3>아이디를 선택하세요(vo로 가져오기)</h3>
+    <select name="mid2" id="mid2" onchange="midCheck2()">
+      <option value="">아이디선택</option>
+      <c:forEach var="mid" items="${midVos}" varStatus="st">
+      	<option>${mid}</option>
+      </c:forEach>
+    </select>
+    <hr/>
+    <div id="demo2"></div>
+    <hr/>
+    
+    <h3>주소를 선택하세요(vos로 가져오기)</h3>
+    <div>동일한 주소는 콤보상자에 1개씩만 출력하시오</div>
+    <select name="address" id="address" onchange="addressCheck()">
+      <option value="">주소선택</option>
+      <!--  -->
+    </select>
+    <hr/>
+    <div id="demo3"></div>
+    <hr/>
   </form>
+  <hr/>
+  <div><a href="${ctp}/study/ajax/ajaxForm" class="btn btn-success">돌아가기</a></div>
 </div>
 <p><br/></p>
 <jsp:include page="/WEB-INF/views/include/footer.jsp" />

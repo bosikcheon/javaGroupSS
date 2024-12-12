@@ -3,7 +3,14 @@ package com.spring.javaGroupS.controller;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,7 +18,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.spring.javaGroupS.service.DbtestService;
+import com.spring.javaGroupS.service.MemberService;
 import com.spring.javaGroupS.service.StudyService;
+import com.spring.javaGroupS.vo.MailVO;
+import com.spring.javaGroupS.vo.MemberVO;
 import com.spring.javaGroupS.vo.UserVO;
 
 //@RestController
@@ -24,6 +34,12 @@ public class StudyController {
 	
 	@Autowired
 	DbtestService dbtestService;
+	
+	@Autowired
+	JavaMailSender mailSender;
+	
+	@Autowired
+	MemberService memberService;
 	
 	@RequestMapping(value="/ajax/ajaxForm", method = RequestMethod.GET)
 	public String ajaxFormGet() {
@@ -113,4 +129,56 @@ public class StudyController {
 		str += "주소 : " + vo.getAddress() + "<br>";
 		return str;
 	}
+	
+	// 메일 폼 보기(주소록을 함께 넘겨주고 있다)
+	@RequestMapping(value = "/mail/mailForm", method = RequestMethod.GET)
+	public String mailFormGet(Model model) {
+		ArrayList<MemberVO> vos = memberService.getMemberTotalList();
+		model.addAttribute("vos", vos);
+		return "study/mail/mail";
+	}
+	
+	// 메일 전송하기
+	@RequestMapping(value = "/mail/mailForm", method = RequestMethod.POST)
+	public String mailFormPost(MailVO vo, HttpServletRequest request) throws MessagingException {
+		String toMail = vo.getToMail();
+		String title = vo.getTitle();
+		String content = vo.getContent();
+		
+		// 메일 전송을 위한 객체 : MimeMessage(), MimeMessageHelper()
+		MimeMessage message = mailSender.createMimeMessage();
+		MimeMessageHelper messageHelper = new MimeMessageHelper(message, true, "UTF-8");
+		
+		messageHelper.setTo(toMail);			// 받는 사람의 메일주소
+		messageHelper.setSubject(title);	// 메일 제목
+		messageHelper.setText(content);		// 메일 내용
+		
+		content = content.replace("\n", "<br>");
+		content += "<br><hr><h3>JavaGroup 에서 길동이가 보냅니다.</h3><hr><br>";
+		content += "<p><img src=\"cid:main.jpg\" width='500px'></p>";
+		content += "<p>방문하기 : <a href='http://49.142.157.251:9090/cjgreen'>JavaGroup</a></p>";
+		content += "<hr>";
+		messageHelper.setText(content, true);
+		
+		// 본문에 기재될 그림파일의 경로를 별도로 지정처리한다. 그런후 다시 보관함에 저장한다.
+		//FileSystemResource file = new FileSystemResource("D:\\javaGroup\\springframework\\works\\javaGroupS\\src\\main\\webapp\\resources\\images\\main.jpg");
+		//request.getSession().getServletContext().getRealPath("/resources/images/main.jpg");
+		
+		FileSystemResource file = new FileSystemResource(request.getSession().getServletContext().getRealPath("/resources/images/main.jpg"));
+		messageHelper.addInline("main.jpg", file);
+		
+		// 첨부파일 보내기
+		//file = new FileSystemResource("D:\\javaGroup\\springframework\\works\\javaGroupS\\src\\main\\webapp\\resources\\images\\3.zip");
+		file = new FileSystemResource(request.getSession().getServletContext().getRealPath("/resources/images/3.zip"));
+		messageHelper.addAttachment("3.zip", file);
+		file = new FileSystemResource(request.getSession().getServletContext().getRealPath("/resources/images/11.jpg"));
+		messageHelper.addAttachment("11.jpg", file);
+		
+		// 메일 전송하기
+		mailSender.send(message);
+		
+		return "redirect:/message/mailSendOk";
+	}
+	
+	
 }

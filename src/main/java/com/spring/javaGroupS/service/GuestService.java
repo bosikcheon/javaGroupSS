@@ -1,5 +1,6 @@
 package com.spring.javaGroupS.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.spring.javaGroupS.vo.GuestVO;
@@ -13,5 +14,7 @@ public interface GuestService {
 	int setGuestDeleteOk(int idx);
 
 	int getTotRecCnt();
+
+	ArrayList<GuestVO> getGuestMidList(String nickName);
 
 }

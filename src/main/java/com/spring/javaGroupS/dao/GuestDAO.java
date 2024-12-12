@@ -1,5 +1,6 @@
 package com.spring.javaGroupS.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
@@ -15,5 +16,7 @@ public interface GuestDAO {
 	int setGuestDeleteOk(int idx);
 
 	int getTotRecCnt();
+
+	ArrayList<GuestVO> getGuestMidList(@Param("nickName") String nickName);
 
 }

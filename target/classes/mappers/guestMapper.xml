@@ -11,6 +11,9 @@
 		select count(*) from guest;
 	</select>
 	
+	<select id="getGuestMidList" resultType="com.spring.javaGroupS.vo.GuestVO">
+		select * from guest where name = #{nickName} order by idx desc;
+	</select>
 	
 	
 	
