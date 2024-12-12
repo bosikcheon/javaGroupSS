@@ -3,23 +3,43 @@
 <mapper namespace="com.spring.javaGroupS.dao.MemberDAO">
 
 	<select id="getMemberIdCheck" resultType="com.spring.javaGroupS.vo.MemberVO">
-		select * from member where mid = #{mid};
+		select * from member where userDel != 'OK' and mid = #{mid};
 	</select>
 	
 	<select id="getMemberNickNameCheck" resultType="com.spring.javaGroupS.vo.MemberVO">
-		select * from member where nickName = #{nickName};
+		select * from member where userDel != 'OK' and nickName = #{nickName};
 	</select>
-	
+	<!-- 
 	<select id="getMemberTotalList" resultType="com.spring.javaGroupS.vo.MemberVO">
 		select * from member order by mid;
 	</select>
-	
+	 -->
+	<!-- 
 	<select id="getMemberList" resultType="com.spring.javaGroupS.vo.MemberVO">
-		select * from member order by mid limit #{startIndexNo},#{pageSize};
+	  <if test="flag == 'mail'">
+			select * from member order by mid;
+		</if>
+	  <if test="flag != 'mail'">
+			select * from member order by mid limit #{startIndexNo},#{pageSize};
+		</if>
+	</select>
+	 -->
+	<select id="getMemberList" resultType="com.spring.javaGroupS.vo.MemberVO">
+		select * from member  
+		  <if test='flag != "admin"'> where userDel != 'OK' </if> order by mid 
+		  <if test='flag != "mail"'> limit #{startIndexNo},#{pageSize} </if>;
 	</select>
 	
 	<select id="getTotRecCnt" resultType="int">
-		select count(*) from member;
+		select count(*) from member <if test='flag != "admin"'> where userDel != 'OK' </if>;
+	</select>
+	
+	<select id="getMemberLevelList" resultType="com.spring.javaGroupS.vo.MemberVO">
+		select * from member <if test="level != 999"> where level = #{level} </if> order by mid limit #{startIndexNo},#{pageSize};
+	</select>
+	
+	<select id="getTotRecLevelCnt" resultType="int">
+		select count(*) from member <if test='flag != "admin"'> where userDel != 'OK' </if>;
 	</select>
 	
 	
@@ -30,7 +50,20 @@
 	
 	
 	<update id="setMemberInforUpdate">
-		update member set visitCnt=visitCnt+1, lastDate=now(), todayCnt=#{todayCnt} where mid = #{mid};
+		update member set visitCnt=visitCnt+1, lastDate=now(), todayCnt=#{todayCnt}, point=point+10 where mid = #{mid};
 	</update>
+	
+	<update id="setMemberPwdCheckOk">
+		update member set pwd = #{pwd} where mid = #{mid};
+	</update>
+	
+	<update id="setMemberUpdateOk">
+		update member set nickName=#{vo.nickName},name=#{vo.name},gender=#{vo.gender},birthday=#{vo.birthday},tel=#{vo.tel},address=#{vo.address2},email=#{vo.email},content=#{vo.content},photo=#{vo.photo},userInfor=#{vo.userInfor} where mid = #{vo.mid};
+	</update>
+	
+	<update id="setMemberDeleteCheck">
+		update member set userDel = 'OK', level=99 where mid = #{mid};
+	</update>
+	
 
 </mapper>

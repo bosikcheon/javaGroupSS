@@ -41,13 +41,33 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public int getTotRecCnt() {
-		return memberDAO.getTotRecCnt();
+	public List<MemberVO> getMemberList(int startIndexNo, int pageSize, String flag) {
+		return memberDAO.getMemberList(startIndexNo, pageSize, flag);
 	}
 
 	@Override
-	public List<MemberVO> getMemberList(int startIndexNo, int pageSize) {
-		return memberDAO.getMemberList(startIndexNo, pageSize);
+	public int setMemberPwdCheckOk(String mid, String pwd) {
+		return memberDAO.setMemberPwdCheckOk(mid, pwd);
+	}
+
+	@Override
+	public int setMemberUpdateOk(MemberVO vo) {
+		return memberDAO.setMemberUpdateOk(vo);
+	}
+
+	@Override
+	public int setMemberDeleteCheck(String mid) {
+		return memberDAO.setMemberDeleteCheck(mid);
+	}
+
+	@Override
+	public int getTotRecCnt(String flag) {
+		return memberDAO.getTotRecCnt(flag);
+	}
+
+	@Override
+	public List<MemberVO> getMemberLevelList(int startIndexNo, int pageSize, int level) {
+		return memberDAO.getMemberLevelList(startIndexNo, pageSize, level);
 	}
 
 }

@@ -6,7 +6,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>memberList.jsp</title>
+  <title>admin/member/memberList.jsp</title>
   <jsp:include page="/WEB-INF/views/include/bs5.jsp" />
   <link rel="stylesheet" type="text/css" href="${ctp}/css/userTable.css" />
   <style>
@@ -20,14 +20,95 @@
     function contentView(content) {
     	$("#myModal #modalContent").html(content);
     }
+    
+    function levelChange(e) {
+    	let ans = confirm("선택한 회원의 등급을 변경하시겠습니까?");
+    	if(!ans) {
+    		location.reload();
+    		return false;
+    	}
+    	// items[0] : 레벨번호, items[1] : 고유번호
+    	let items = e.value.split("/");
+    	
+    	$.ajax({
+    		type : "post",
+    		url  : "${ctp}/admin/member/memberLevelChange",
+    		data : {
+    			level : items[0],
+    			idx   : items[1]
+    		},
+    		success:function(res) {
+    			if(res != 0) {
+    				alert("등급 수정 완료!!");
+    				location.reload();
+    			}
+    			else alert("등급 수정 실패~~");
+    		},
+    		error : function() {
+    			alert("전송오류!");
+    		}
+    	});
+    }
+    
+    /* 등급을 변경하거나 페이지를 변경한다면 무조건 1Page로 간다는 전제조건으로 시작한다. */
+    
+    // 등급별 조회
+    function levelViewCheck() {
+    	let level = document.getElementById("levelView").value;
+    	location.href = "${ctp}/admin/member/memberList?pageSize=${pageSize}&pag=1&level="+level;
+    }
+    
+    // 사용자 페이지 설정
+    function pageSizeChange() {
+    	let pageSize = document.getElementById("pageSize").value;
+    	//location.href = "MemberList.ad?pageSize="+pageSize+"&pag=${pag}&level=${level}";
+    	location.href = "MemberList.ad?pageSize="+pageSize+"&pag=1&level=${level}";
+    }
+    
+    // 탈퇴신청후 30일 지난 회원들 DB에서 자료 삭제시키기
+    function delCheck(mid) {
+    	let ans = confirm("회원정보를 삭제하시겠습니까?");
+    	if(!ans) return false;
+    		
+    	$.ajax({
+    		type : "post",
+    		url  : "MemberDeleteOk.ad",
+    		data : {mid : mid},
+    		success:function(res) {
+    			if(res != 0) {
+    				alert(mid + " 회원정보를 DB에서 삭제 시켰습니다.");
+    				location.reload();
+    			}
+    			else alert(mid + "회원정보 삭제 실패~~");
+    		},
+    		error : function() {
+    			alert("전송오류!");
+    		}
+    	});
+    		
+    }
   </script>
 </head>
 <body>
-<jsp:include page="/WEB-INF/views/include/nav.jsp" />
-<jsp:include page="/WEB-INF/views/include/slide2.jsp" />
 <p><br/></p>
 <div class="container">
   <h2 class="text-center mb-5">회 원 리 스 트</h2>
+  
+  <table class="table table-borderless m-0">
+    <tr>
+      <td class="text-end">등급별조회
+        <select name="levelView" id="levelView" onchange="levelViewCheck()">
+          <option value="999" <c:if test="${level == 999}">selected</c:if> >전체회원</option>
+          <option value="3"   <c:if test="${level == 3}" >selected</c:if> >준회원</option>
+          <option value="2"   <c:if test="${level == 2}" >selected</c:if> >정회원</option>
+          <option value="1"   <c:if test="${level == 1}" >selected</c:if> >우수회원</option>
+          <option value="99"  <c:if test="${level == 99}">selected</c:if> >탈퇴신청회원</option>
+          <option value="0"   <c:if test="${level == 0}" >selected</c:if>  >관리자</option>
+        </select>
+      </td>
+    </tr>
+  </table>  
+  
   <table class="table table-hover" id="userTable">
     <tr class="table-secondary">
       <th>번호</th>
@@ -38,8 +119,9 @@
       <th>생일</th>
       <th>이메일</th>
       <th>최종방문일</th>
+      <th>활동여부</th>
+      <th>현재레벨</th>
     </tr>
-    <%-- <c:set var="curScrStartNo" value="${curScrStartNo}" /> --%>
 	  <c:forEach var="vo" items="${vos}" varStatus="st">
 	    <tr>
 	      <td>${curScrStartNo}</td>
@@ -60,10 +142,24 @@
 	      <c:if test="${vo.userInfor != '공개'}">
 	        <td colspan="6" class="text-center">비 공 개</td>
 	      </c:if>
+	      <td>
+	        <c:if test="${vo.userDel == 'OK'}"><c:set var="strUserDel" value="탈퇴신청중" /></c:if>
+	        <c:if test="${vo.userDel != 'OK'}"><c:set var="strUserDel" value="활동중" /></c:if>
+	        <c:if test="${vo.userDel == 'OK'}"><font color="red">${strUserDel}</font></c:if>
+	        <c:if test="${vo.userDel != 'OK'}">${strUserDel}</c:if>
+	      </td>
+	      <td>
+	        <select name="level" id="level" onchange="levelChange(this)">
+	          <option value="3/${vo.idx}"  ${vo.level == 3 ? 'selected' : ''}>준회원</option>
+	          <option value="2/${vo.idx}"  ${vo.level == 2 ? 'selected' : ''}>정회원</option>
+	          <option value="1/${vo.idx}"  ${vo.level == 1 ? 'selected' : ''}>우수회원</option>
+	          <option value="0/${vo.idx}"  ${vo.level == 0 ? 'selected' : ''}>관리자</option>
+	          <option value="99/${vo.idx}" ${vo.level == 99 ? 'selected' : ''}>탈퇴신청회원</option>
+	        </select>
+	      </td>
 	    </tr>
 	    <c:set var="curScrStartNo" value="${curScrStartNo - 1}" />
   	</c:forEach>
-  	<!-- <tr><td colspan="8" class="m-0 p-0"></td></tr> -->
   </table>
   
 <!-- 블록페이지 시작 -->
@@ -108,6 +204,5 @@
 
 </div>
 <p><br/></p>
-<jsp:include page="/WEB-INF/views/include/footer.jsp" />
 </body>
 </html>

@@ -19,6 +19,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -242,13 +243,14 @@ public class MemberController {
 		mailSender.send(message);
 	}
 	
+	// 회원 전체 리스트(페이징 처리)
 	@RequestMapping(value = "/memberList", method = RequestMethod.GET)
 	public String memberListGet(Model model,
 			@RequestParam(name="pag", defaultValue = "1", required = false) int pag,
 			@RequestParam(name="pageSize", defaultValue = "10", required = false) int pageSize
 		) {
 		
-		int totRecCnt = memberService.getTotRecCnt();
+		int totRecCnt = memberService.getTotRecCnt("");
 		int totPage = (totRecCnt % pageSize)==0 ? (totRecCnt / pageSize) : (totRecCnt / pageSize) + 1;
 		int startIndexNo = (pag - 1) * pageSize;
 		int curScrStartNo = totRecCnt - startIndexNo;
@@ -256,7 +258,7 @@ public class MemberController {
 		int curBlock = (pag - 1) / blockSize;
 		int lastBlock = (totPage - 1) / blockSize;
 		
-		List<MemberVO> vos = memberService.getMemberList(startIndexNo, pageSize);
+		List<MemberVO> vos = memberService.getMemberList(startIndexNo, pageSize, "page");
 		
 		model.addAttribute("vos", vos);
 		model.addAttribute("pag", pag);
@@ -270,4 +272,97 @@ public class MemberController {
 		
 		return "member/memberList";
 	}
+	
+	// 현재 비밀번호 확인처리
+	@ResponseBody
+	@RequestMapping(value = "/memberPwdCheckOk", method = RequestMethod.GET)
+	public String memberPwdCheckOkGet(Model model, String mid, String pwd) {
+		MemberVO vo = memberService.getMemberIdCheck(mid);
+		if(vo == null) return "0";
+		
+		String salt = vo.getPwd().substring(0,3);
+		SecurityUtil security = new SecurityUtil();
+		String tempPwd = security.encryptSHA256(salt + pwd);
+		
+		if(!vo.getPwd().substring(3).equals(tempPwd)) return "0";
+		else return "1";
+	}
+	
+	// 비밀번호 확인창으로 이동하기(pwdFlag값이 p는 비밀번호 변경, i는 정보수정창으로 이동처리함)
+	@RequestMapping(value = "/memberPwdCheck/{pwdFlag}", method = RequestMethod.GET)
+	public String memberPwdCheckGet(Model model, @PathVariable String pwdFlag) {
+		model.addAttribute("pwdFlag", pwdFlag);
+		return "member/memberPwdCheck";
+	}
+	
+	// 비밀번호 변경처리
+	@RequestMapping(value = "/memberPwdCheck/{pwdFlag}", method = RequestMethod.POST)
+	public String memberPwdCheckPost(Model model, @PathVariable String pwdFlag, String mid, String pwdCheck) {
+		String salt = UUID.randomUUID().toString().substring(0,3);
+		SecurityUtil security = new SecurityUtil();
+		String pwd = salt + security.encryptSHA256(salt + pwdCheck);
+		
+		int res = memberService.setMemberPwdCheckOk(mid, pwd);
+		
+		if(res != 0) return "redirect:/message/memberPwdChangeOk";
+		else return "redirect:/message/memberPwdChangeNo";
+	}
+	
+	// 회원 정보수정창 폼으로 이동
+	@RequestMapping(value = "/memberUpdate", method = RequestMethod.GET)
+	public String memberUpdateGet(Model model, HttpSession session) {
+		String mid = (String) session.getAttribute("sMid");
+		MemberVO vo = memberService.getMemberIdCheck(mid);
+		String[] tels = vo.getTel().split("-");
+		String[] emails = vo.getEmail().split("@");
+		String[] addresss = vo.getAddress().split("/");
+		
+		vo.setTel1(tels[0]);
+		vo.setTel2(tels[1]);
+		vo.setTel3(tels[2]);
+		vo.setEmail1(emails[0]);
+		vo.setEmail2(emails[1]);
+		vo.setPostcode(addresss[0]);
+		vo.setAddress(addresss[1]);
+		vo.setDetailAddress(addresss[2]);
+		vo.setExtraAddress(addresss[3]);		
+		
+		model.addAttribute("vo", vo);
+		return "member/memberUpdate";
+	}
+	
+	// 회원 정보수정 처리
+	@RequestMapping(value = "/memberUpdate", method = RequestMethod.POST)
+	public String memberUpdatePost(Model model, HttpSession session, MemberVO vo) {
+		System.out.println("vo : " + vo);
+		// 닉네임 체크
+		String nickName = (String) session.getAttribute("sNickName");
+		if(memberService.getMemberNickNameCheck(vo.getNickName()) != null && !nickName.equals(vo.getNickName())) return "redirect:/message/nickNameCheckNo";
+		
+		// 회원 사진 처리
+		if(vo.getPhoto() == null || vo.getPhoto() == "") vo.setPhoto("noimage.jpg");
+		
+		// 회원 정보 수정
+		int res = memberService.setMemberUpdateOk(vo);
+		if(res != 0) {
+			session.setAttribute("sNickName", vo.getNickName());
+			return "redirect:/message/memberUpdateOk";
+		}
+		else return "redirect:/message/memberUpdateNo";
+	}
+	
+	// 회원 탈퇴 신청..
+	@ResponseBody
+	@RequestMapping(value = "/memberDeleteCheck", method = RequestMethod.POST)
+	public String memberDeleteCheckPost(HttpSession session) {
+		String mid = (String) session.getAttribute("sMid");
+		int res = memberService.setMemberDeleteCheck(mid);
+		
+		if(res != 0) {
+			session.invalidate();
+			return "1";
+		}
+		else return "0";
+	}
+	
 }

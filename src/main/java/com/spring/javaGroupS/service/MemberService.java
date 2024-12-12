@@ -17,8 +17,16 @@ public interface MemberService {
 
 	ArrayList<MemberVO> getMemberTotalList();
 
-	int getTotRecCnt();
+	int getTotRecCnt(String flag);
 
-	List<MemberVO> getMemberList(int startIndexNo, int pageSize);
+	List<MemberVO> getMemberList(int startIndexNo, int pageSize, String flag);
+
+	int setMemberPwdCheckOk(String mid, String pwd);
+
+	int setMemberUpdateOk(MemberVO vo);
+
+	int setMemberDeleteCheck(String mid);
+
+	List<MemberVO> getMemberLevelList(int startIndexNo, int pageSize, int level);
 
 }

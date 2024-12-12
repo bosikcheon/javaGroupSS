@@ -2,6 +2,7 @@ package com.spring.javaGroupS.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -133,7 +134,8 @@ public class StudyController {
 	// 메일 폼 보기(주소록을 함께 넘겨주고 있다)
 	@RequestMapping(value = "/mail/mailForm", method = RequestMethod.GET)
 	public String mailFormGet(Model model) {
-		ArrayList<MemberVO> vos = memberService.getMemberTotalList();
+//		ArrayList<MemberVO> vos = memberService.getMemberTotalList();
+		List<MemberVO> vos = memberService.getMemberList(0, 0, "mail");
 		model.addAttribute("vos", vos);
 		return "study/mail/mail";
 	}

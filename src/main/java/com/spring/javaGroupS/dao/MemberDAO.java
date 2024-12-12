@@ -19,8 +19,16 @@ public interface MemberDAO {
 
 	ArrayList<MemberVO> getMemberTotalList();
 
-	int getTotRecCnt();
+	int getTotRecCnt(String flag);
 
-	List<MemberVO> getMemberList(@Param("startIndexNo") int startIndexNo, @Param("pageSize") int pageSize);
+	List<MemberVO> getMemberList(@Param("startIndexNo") int startIndexNo, @Param("pageSize") int pageSize, @Param("flag") String flag);
+
+	int setMemberPwdCheckOk(@Param("mid") String mid, @Param("pwd") String pwd);
+
+	int setMemberUpdateOk(@Param("vo") MemberVO vo);
+
+	int setMemberDeleteCheck(@Param("mid") String mid);
+
+	List<MemberVO> getMemberLevelList(@Param("startIndexNo") int startIndexNo, @Param("pageSize") int pageSize, @Param("level") int level);
 
 }

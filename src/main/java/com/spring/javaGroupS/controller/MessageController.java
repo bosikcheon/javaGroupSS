@@ -137,6 +137,30 @@ public class MessageController {
 			model.addAttribute("message", "회원가입 실패~~\\다시 회원 가입후 사용해 주세요.");
 			model.addAttribute("url", "member/memberJoin");
 		}
+		else if(msgFlag.equals("memberPwdChangeOk")) {
+			model.addAttribute("message", "비밀번호가 변경되었습니다.\\n다시 로그인해 주세요.");
+			model.addAttribute("url", "member/memberLogout");
+		}
+		else if(msgFlag.equals("memberPwdChangeNo")) {
+			model.addAttribute("message", "비밀번호가 변경 실패~~");
+			model.addAttribute("url", "member/memberMain");
+		}
+		else if(msgFlag.equals("memberUpdate")) {
+			model.addAttribute("message", "회원정보 수정창으로 이동합니다.");
+			model.addAttribute("url", "member/memberUpdate");
+		}
+		else if(msgFlag.equals("nickNameCheckNo")) {
+			model.addAttribute("message", "닉네임이 중복되었습니다.\\n확인하세요.");
+			model.addAttribute("url", "member/memberUpdate");
+		}
+		else if(msgFlag.equals("memberUpdateOk")) {
+			model.addAttribute("message", "정보가 수정되었습니다.");
+			model.addAttribute("url", "member/memberMain");
+		}
+		else if(msgFlag.equals("memberUpdateNo")) {
+			model.addAttribute("message", "정보 수정실패~~~");
+			model.addAttribute("url", "member/memberUpdate");
+		}
 		
 		
 		
