@@ -39,5 +39,10 @@ public class GuestServiceImpl implements GuestService {
 	public ArrayList<GuestVO> getGuestMidList(String nickName) {
 		return guestDAO.getGuestMidList(nickName);
 	}
+
+	@Override
+	public int getRecentCnt() {
+		return guestDAO.getRecentCnt();
+	}
 	
 }

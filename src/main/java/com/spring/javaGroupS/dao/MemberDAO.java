@@ -35,4 +35,6 @@ public interface MemberDAO {
 
 	int getInforCheck(@Param("mid") String mid, @Param("email") String email);
 
+	int getLevelCnt(@Param("level") int level);
+
 }

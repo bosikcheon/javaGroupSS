@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.spring.javaGroupS.service.AdminService;
+import com.spring.javaGroupS.service.BoardService;
+import com.spring.javaGroupS.service.GuestService;
 import com.spring.javaGroupS.service.MemberService;
 import com.spring.javaGroupS.vo.MemberVO;
 
@@ -24,6 +26,12 @@ public class AdminController {
 	@Autowired
 	MemberService memberService;
 	
+	@Autowired
+	GuestService guestService;
+	
+	@Autowired
+	BoardService boardService;
+	
 	@RequestMapping(value = "/adminMain", method = RequestMethod.GET)
 	public String adminMainGet() {
 		return "admin/adminMain";
@@ -35,7 +43,17 @@ public class AdminController {
 	}
 	
 	@RequestMapping(value = "/adminContent", method = RequestMethod.GET)
-	public String adminContentGet() {
+	public String adminContentGet(Model model) {
+		int guestRecentCnt = guestService.getRecentCnt();	// 최신 1주일이내 방명록 게시글
+		int boardRecentCnt = boardService.getRecentCnt();	// 최신 1주일이내 게시판 게시글
+		int level3Cnt = memberService.getLevelCnt(3);			// 신규회원수
+		int level99Cnt = memberService.getLevelCnt(99);		// 탈회신청회원수
+	
+		model.addAttribute("guestRecentCnt", guestRecentCnt);
+		model.addAttribute("boardRecentCnt", boardRecentCnt);
+		model.addAttribute("level3Cnt", level3Cnt);
+		model.addAttribute("level99Cnt", level99Cnt);
+		
 		return "admin/adminContent";
 	}
 	

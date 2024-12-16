@@ -30,4 +30,6 @@ public interface BoardDAO {
 
 	int setBoardGood2(@Param("idx") int idx, @Param("goodCnt") int goodCnt);
 
+	int getRecentCnt();
+
 }

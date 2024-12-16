@@ -177,6 +177,11 @@ public class BoardServiceImpl implements BoardService {
 	public int setBoardGood2(int idx, int goodCnt) {
 		return boardDAO.setBoardGood2(idx, goodCnt);
 	}
+
+	@Override
+	public int getRecentCnt() {
+		return boardDAO.getRecentCnt();
+	}
 	
 	
 }

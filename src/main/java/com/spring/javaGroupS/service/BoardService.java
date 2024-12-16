@@ -32,4 +32,6 @@ public interface BoardService {
 
 	int setBoardGood2(int idx, int goodCnt);
 
+	int getRecentCnt();
+
 }
