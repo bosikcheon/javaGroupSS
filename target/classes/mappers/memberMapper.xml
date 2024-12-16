@@ -42,6 +42,14 @@
 		select count(*) from member <if test='flag != "admin"'> where userDel != 'OK' </if>;
 	</select>
 	
+	<select id="getMemberEmailCheck" resultType="com.spring.javaGroupS.vo.MemberVO">
+		select * from member where email = #{email};
+	</select>
+	
+	<select id="getInforCheck" resultType="int">
+		select idx from member where mid = #{mid} and pwd = #{pwd};
+	</select>
+	
 	
 	
 	<insert id="setMemberJoinOk">

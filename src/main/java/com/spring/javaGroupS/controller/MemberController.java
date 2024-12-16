@@ -201,7 +201,6 @@ public class MemberController {
 	public String memberEmailCheckPost(HttpSession session, HttpServletRequest request, String email) throws MessagingException {
 		String emailKey = UUID.randomUUID().toString().substring(0, 8);
 		session.setAttribute("sEmailKey", emailKey);
-		System.out.println("sEmailKey : " + emailKey);
 		
 		mailSend(email, "이메일 인증키입니다.", "인증키 : " + emailKey, request);
 		
@@ -363,6 +362,58 @@ public class MemberController {
 			return "1";
 		}
 		else return "0";
+	}
+	
+	// 회원 아이디 찾기
+	@RequestMapping(value = "/memberIdSearch", method = RequestMethod.GET)
+	public String memberIdSearchGet() {
+		return "member/memberIdSearch";
+	}
+	
+	// 아이디 찾기를 위한 인증메일 발송하기
+	@ResponseBody
+	@RequestMapping(value = "/emailCheck", method = RequestMethod.POST)
+	public String emailCheckGet(HttpServletRequest request, HttpSession session, String email) throws MessagingException {
+	  ArrayList<MemberVO> vos = memberService.getMemberEmailCheck(email);
+		if(vos.size() == 0) return "0";
+		
+		String emailKey = UUID.randomUUID().toString().substring(0,8);
+		session.setAttribute("sEmailKey", emailKey);
+		//System.out.println("emailKey: " + emailKey);
+		mailSend(email, "아이디 찾기를 위한 인증번호", "인증번호 : " + emailKey, request);
+		return "1";
+	}
+	
+	// 인증번호 확인후 아이디 돌려주기
+	@ResponseBody
+	@RequestMapping(value = "/emailCheckOk", method = RequestMethod.POST)
+	public ArrayList<MemberVO> emailCheckGet(HttpSession session, String email, String checkKey) {
+		String emailKey = (String) session.getAttribute("sEmailKey");
+		if(!emailKey.equals(checkKey))	return null;
+		
+		ArrayList<MemberVO> vos = memberService.getMemberEmailCheck(email);
+		return vos;
+	}
+	
+	// 비밀번호 찾기 폼
+	@RequestMapping(value = "/memberPwdSearch", method = RequestMethod.GET)
+	public String memberPwdSearchGet() {
+		return "member/memberPwdSearch";
+	}
+	
+	// 임시 비밀번호 전송을 위한 아이디와 메일주소 체크하기
+	@ResponseBody
+	@RequestMapping(value = "/inforCheck", method = RequestMethod.POST)
+	public String inforCheckGet(String mid, String email) {
+		return memberService.getInforCheck(mid, email) + "";
+	}
+	
+	// 임시 비밀번호 전송하기
+	@ResponseBody
+	@RequestMapping(value = "/emailSendOk", method = RequestMethod.POST)
+	public void emailSendOkGet(HttpServletRequest request, String mid, String email) throws MessagingException {
+		String mailFlag = UUID.randomUUID().toString().substring(0,8);
+		mailSend(email, mid+"님 임시비밀번호", mailFlag, request);
 	}
 	
 }

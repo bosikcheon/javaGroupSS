@@ -42,8 +42,8 @@
 		  </tr>
 		</table>
 		<div class="text-center">
-		  <a href="#" class="badge badge-secondary">아이디찾기</a> |
-		  <a href="#" class="badge badge-secondary">비밀번호찾기</a>
+		  <a href="memberIdSearch"><span class="badge bg-secondary">아이디찾기</span></a> |
+		  <a href="memberPwdSearch"><span class="badge bg-secondary">비밀번호찾기</span></a>
 		</div>
   </form>
 </div>

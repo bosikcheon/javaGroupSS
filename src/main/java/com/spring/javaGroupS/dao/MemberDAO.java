@@ -31,4 +31,8 @@ public interface MemberDAO {
 
 	List<MemberVO> getMemberLevelList(@Param("startIndexNo") int startIndexNo, @Param("pageSize") int pageSize, @Param("level") int level);
 
+	ArrayList<MemberVO> getMemberEmailCheck(@Param("email") String email);
+
+	int getInforCheck(@Param("mid") String mid, @Param("email") String email);
+
 }

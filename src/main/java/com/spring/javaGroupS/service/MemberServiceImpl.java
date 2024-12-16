@@ -70,4 +70,14 @@ public class MemberServiceImpl implements MemberService {
 		return memberDAO.getMemberLevelList(startIndexNo, pageSize, level);
 	}
 
+	@Override
+	public ArrayList<MemberVO> getMemberEmailCheck(String email) {
+		return memberDAO.getMemberEmailCheck(email);
+	}
+
+	@Override
+	public int getInforCheck(String mid, String email) {
+		return memberDAO.getInforCheck(mid, email);
+	}
+
 }

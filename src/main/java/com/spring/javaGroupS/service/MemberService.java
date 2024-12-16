@@ -29,4 +29,8 @@ public interface MemberService {
 
 	List<MemberVO> getMemberLevelList(int startIndexNo, int pageSize, int level);
 
+	ArrayList<MemberVO> getMemberEmailCheck(String email);
+
+	int getInforCheck(String mid, String email);
+
 }

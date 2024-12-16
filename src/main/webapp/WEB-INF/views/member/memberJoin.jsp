@@ -192,6 +192,7 @@
     	});
     }
     
+    // 메일로 전송받은 인증키에대한 인증확인처리
     function emailCheckOk() {
     	let checkKey = $("#checkKey").val();
     	if(checkKey.trim() == "") {
