@@ -14,3 +14,5 @@ desc guest;
 insert into guest values (default,'관리자','방명록 서비스를 시작합니다.','cjsk1126@naver.com','cjsk1126.tistory.com',default,'192.168.50.20');
 
 select * from guest;
+
+select count(*) from guest where visitDate >= date_sub(now(), interval 7 day);

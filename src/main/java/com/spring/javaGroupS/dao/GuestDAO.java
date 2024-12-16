@@ -19,4 +19,6 @@ public interface GuestDAO {
 
 	ArrayList<GuestVO> getGuestMidList(@Param("nickName") String nickName);
 
+	int getRecentCnt();
+
 }

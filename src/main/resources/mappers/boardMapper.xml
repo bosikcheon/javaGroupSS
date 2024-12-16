@@ -30,6 +30,10 @@
 	<select id="getBoardContent" resultType="com.spring.javaGroupS.vo.BoardVO">
 		select * from board where idx = #{idx};
 	</select>
+	
+	<select id="getRecentCnt" resultType="int">
+		select count(*) from board where wDate >= date_sub(now(), interval 7 day);
+	</select>
 
 
 

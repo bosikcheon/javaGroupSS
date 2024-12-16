@@ -33,4 +33,6 @@ public interface MemberService {
 
 	int getInforCheck(String mid, String email);
 
+	int getLevelCnt(int level);
+
 }

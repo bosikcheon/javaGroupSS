@@ -29,6 +29,8 @@ select idx, mid, title, timestampdiff(hour, wDate, now()) as time_diff from boar
 select idx, title from board where idx < 26 order by idx desc limit 1;
 select idx, title from board where idx > 26 order by idx limit 1;
 
+select count(*) from board where wDate >= date_sub(now(), interval 7 day);
+
 
 /* 댓글 테이블(boardReply) */
 create table boardReply (

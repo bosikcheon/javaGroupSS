@@ -1,7 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<% pageContext.setAttribute("newLine", "\n"); %>
+<% pageContext.setAttribute("CRLF", "\r\n"); %>
+<%-- <% pageContext.setAttribute("LF", "\n"); %> --%>
 <c:set var="ctp" value="${pageContext.request.contextPath}"/>
 <!DOCTYPE html>
 <html>
@@ -73,7 +74,14 @@
 		        <c:if test="${vo.time_diff <= 24}"><img src="${ctp}/images/new.gif" /></c:if>
 		        <c:if test="${vo.replyCnt != 0}">(${vo.replyCnt})</c:if>
 		      </td>
-		      <td><a href="#" onclick='contentView("${vo.content}")' data-bs-toggle="modal" data-bs-target="#myModal">${vo.nickName}</a></td>
+		      <td>
+		        <c:if test="${empty vo.content}"><c:set var="content" value="내용없음" /></c:if>
+						<c:if test="${!empty vo.content}">
+      				<%-- <c:set var="content" value="${fn:replace(fn:replace(vo.content, CRLF, '<br/>'), LF, '<br/>')}" /> --%>
+      				<c:set var="content" value="${fn:replace(vo.content, CRLF, '<br/>')}" />
+						</c:if>
+      			<a href="#" onclick='contentView("${content}")' data-bs-toggle="modal" data-bs-target="#myModal">${vo.nickName}</a>
+		      </td>
 		      <%-- <td><a href="javascript:contentView('${fn:replace(vo.content, newLine, '<br/>')}')">${vo.nickName}</a></td> --%>
 		      <td>	<!-- 24시간이 넘으면 날짜만, 24시간 이내라도 오늘날짜는 시간만, 어제날짜는 날짜와시간을 출력 -->
 		        ${vo.time_diff > 24 ? fn:substring(vo.WDate,0,10) : vo.date_diff == 0 ? fn:substring(vo.WDate,11,19) : fn:substring(vo.WDate,0,19)}

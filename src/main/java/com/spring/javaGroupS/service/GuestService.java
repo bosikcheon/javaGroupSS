@@ -17,4 +17,6 @@ public interface GuestService {
 
 	ArrayList<GuestVO> getGuestMidList(String nickName);
 
+	int getRecentCnt();
+
 }

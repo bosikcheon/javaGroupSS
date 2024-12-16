@@ -15,6 +15,10 @@
 		select * from guest where name = #{nickName} order by idx desc;
 	</select>
 	
+	<select id="getRecentCnt" resultType="int">
+		select count(*) from guest where visitDate >= date_sub(now(), interval 7 day);
+	</select>
+	
 	
 	
 	<insert id="setGuestInput">

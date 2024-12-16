@@ -80,4 +80,9 @@ public class MemberServiceImpl implements MemberService {
 		return memberDAO.getInforCheck(mid, email);
 	}
 
+	@Override
+	public int getLevelCnt(int level) {
+		return memberDAO.getLevelCnt(level);
+	}
+
 }

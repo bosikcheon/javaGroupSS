@@ -50,6 +50,10 @@
 		select idx from member where mid = #{mid} and pwd = #{pwd};
 	</select>
 	
+	<select id="getLevelCnt" resultType="int">
+		select count(*) from member where level = #{level};
+	</select>
+	
 	
 	
 	<insert id="setMemberJoinOk">
