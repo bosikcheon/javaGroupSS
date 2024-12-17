@@ -2,6 +2,7 @@ package com.spring.javaGroupS.service;
 
 import java.util.List;
 
+import com.spring.javaGroupS.vo.BoardReply2VO;
 import com.spring.javaGroupS.vo.BoardVO;
 
 public interface BoardService {
@@ -33,5 +34,19 @@ public interface BoardService {
 	int setBoardGood2(int idx, int goodCnt);
 
 	int getRecentCnt();
+
+	BoardVO getPreNextSearch(int idx, String str);
+
+	BoardReply2VO getBoardParentReplyCheck(int boardIdx);
+
+	int setBoardReplyInput(BoardReply2VO replyVO);
+
+	List<BoardReply2VO> getBoardReplyList(int idx);
+
+	void setReplyOrderUpdate(int boardIdx, int re_order);
+
+	int setBoardReplyInputRe(BoardReply2VO replyVO);
+
+	int setBoardReplyDelete(int idx);
 
 }

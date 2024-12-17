@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.spring.javaGroupS.pagination.PageProcess;
 import com.spring.javaGroupS.pagination.PageVO;
 import com.spring.javaGroupS.service.BoardService;
+import com.spring.javaGroupS.vo.BoardReply2VO;
 import com.spring.javaGroupS.vo.BoardVO;
 
 @Controller
@@ -88,7 +89,10 @@ public class BoardController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/boardContent", method = RequestMethod.GET)
-	public String boardContentGet(Model model, HttpSession session, int idx) {
+	public String boardContentGet(Model model, HttpSession session, int idx,
+		  @RequestParam(name="pag", defaultValue = "1", required = false) int pag,	
+		  @RequestParam(name="pageSize", defaultValue = "10", required = false) int pageSize	
+		) {
 		
 		// 조회수 증가시키기
 		//boardService.setReadNumPlus(idx);
@@ -101,10 +105,18 @@ public class BoardController {
 			contentNum.add(imsiContentNum);
 		}
 		session.setAttribute("sContent", contentNum);
-		
 		BoardVO vo = boardService.getBoardContent(idx);
-		
 		model.addAttribute("vo", vo);
+		
+		// 이전글 다음글처리
+		BoardVO preVO = boardService.getPreNextSearch(idx, "preVO");
+		BoardVO nextVO = boardService.getPreNextSearch(idx, "nextVO");
+		model.addAttribute("preVO", preVO);
+		model.addAttribute("nextVO", nextVO);
+		
+		// 댓글(대댓글) 추가 입력처리
+		List<BoardReply2VO> replyVos = boardService.getBoardReplyList(idx);
+		model.addAttribute("replyVos", replyVos);
 		
 		return "board/boardContent";
 	}
@@ -223,6 +235,43 @@ public class BoardController {
 		session.setAttribute("sGood", goodNum);
 		
 		return res;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/boardReplyInput", method = RequestMethod.POST)
+	public String boardReplyInputPost(BoardReply2VO replyVO) {
+		// 부모댓글의 경우는 re_step=0, 처음 re_order=1로 처리.(단, 2번째 이상부터는 마지막댓글의 re_order+1로 처리)
+		BoardReply2VO replyParentVO = boardService.getBoardParentReplyCheck(replyVO.getBoardIdx());
+		
+		replyVO.setRe_step(0);
+		
+		if(replyParentVO == null) replyVO.setRe_order(1);
+		else replyVO.setRe_order(replyParentVO.getRe_order()+1);
+		
+		return boardService.setBoardReplyInput(replyVO) + "";
+	}
+	
+	// 대댓글(부모댓글, 부모댓글 답변글) 입력처리
+	@ResponseBody
+	@RequestMapping(value = "/boardReplyInputRe", method = RequestMethod.POST)
+	public String boardReplyInputRePost(BoardReply2VO replyVO) {
+		// 대댓글(부모댓글의 댓글/답변글)의 경우는 re_step=re_step+1, re_order는 부모의 re_order보다 큰 댓글은 모두 re_order+1로 처리, 그리고 자신은 부모의 re_order+1 처리한다.
+		
+		replyVO.setRe_step(replyVO.getRe_step() + 1);
+		
+		boardService.setReplyOrderUpdate(replyVO.getBoardIdx(), replyVO.getRe_order());
+
+		replyVO.setRe_order(replyVO.getRe_order() + 1);
+		
+		return boardService.setBoardReplyInput(replyVO) + "";
+	}
+	
+	// 대댓글 삭제....
+	@ResponseBody
+	@RequestMapping(value = "/boardReplyDelete", method = RequestMethod.POST)
+	public String boardReplyDeletePost(int idx) {
+
+		return boardService.setBoardReplyDelete(idx) + "";
 	}
 
 }

@@ -15,5 +15,18 @@ public class AdminServiceImpl implements AdminService {
 	public int setMemberLevelChange(int idx, int level) {
 		return adminDAO.setMemberLevelChange(idx, level);
 	}
+
+	@Override
+	public String setMemberLevelSelectCheck(int levelSelect, String idxSelectArray) {
+		String res = "0";
+		String[] idxSelectArrays = idxSelectArray.split("/");
+		
+		for(String idx : idxSelectArrays) {
+			adminDAO.setMemberLevelChange(Integer.parseInt(idx), levelSelect);
+			res = "1";
+		}
+		
+		return res;
+	}
 	
 }

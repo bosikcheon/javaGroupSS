@@ -35,14 +35,12 @@
   </script>
 </head>
 <body>
-<jsp:include page="/WEB-INF/views/include/nav.jsp" />
-<jsp:include page="/WEB-INF/views/include/slide2.jsp" />
 <p><br/></p>
 <div class="container">
   <h2 class="text-center">게 시 판 리 스 트</h2>
   <table class="table table-borderless mt-3 mb-0 p-0">
     <tr>
-      <td><a href="boardInput" class="btn btn-success btn-sm">글쓰기</a></td>
+      <td><!-- <a href="boardInput" class="btn btn-success btn-sm">글쓰기</a> --></td>
       <td class="text-end">한페이지 분량 :
         <select name="pageSize" id="pageSize" onchange="pageSizeChange()">
           <option value="5"  <c:if test="${pageVO.pageSize == 5}"  >selected</c:if>>5건</option>
@@ -150,6 +148,5 @@
 </div>
 
 <p><br/></p>
-<jsp:include page="/WEB-INF/views/include/footer.jsp" />
 </body>
 </html>

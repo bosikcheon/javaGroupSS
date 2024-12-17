@@ -87,6 +87,60 @@
     	});
     		
     }
+    
+    // 전체 선택
+    function allCheck() {
+    	for(let i=0; i<myform.levelCheck.length; i++) {
+    		myform.levelCheck[i].checked = true;
+    	}
+    }
+    
+    // 전체 해제
+    function allReset() {
+    	for(let i=0; i<myform.levelCheck.length; i++) {
+    		myform.levelCheck[i].checked = false;
+    	}
+    }
+    
+    // 선택 반전
+    function reverseCheck() {
+    	for(let i=0; i<myform.levelCheck.length; i++) {
+    		myform.levelCheck[i].checked = !myform.levelCheck[i].checked;
+    	}
+    }
+    
+    // 선택항목 등급변경처리
+    function levelSelectCheck() {
+    	let select = document.getElementById("levelSelect");
+    	let levelSelectText = select.options[select.selectedIndex].text;
+    	let levelSelect = document.getElementById("levelSelect").value;
+    	
+    	let idxSelectArray = '';
+    	for(let i=0; i<myform.levelCheck.length; i++) {
+    		if(myform.levelCheck[i].checked) idxSelectArray += myform.levelCheck[i].value + "/";
+    	}
+    	idxSelectArray = idxSelectArray.substring(0,idxSelectArray.lastIndexOf("/"));
+    	
+    	let query = {
+    			levelSelect : levelSelect,
+    			idxSelectArray : idxSelectArray
+    	}
+    	
+    	$.ajax({
+    		type : "post",
+    		url  : "${ctp}/admin/member/memberLevelSelectCheck",
+    		data : query,
+    		success:function(res) {
+    			if(res != "0") alert("선택한 항목들이 " + levelSelectText + "(으)로 변경되었습니다.");
+    			else alert("등급변경 실패~~");
+    			location.reload();
+    		},
+    		error : function() {
+    			alert("전송오류");
+    		}
+    	});
+    	
+    }
   </script>
 </head>
 <body>
@@ -96,6 +150,22 @@
   
   <table class="table table-borderless m-0">
     <tr>
+      <td class="text-start">
+        <div>
+          <input type="button" value="전체선택" onclick="allCheck()" class="btn btn-success btn-sm me-1"/>
+          <input type="button" value="전체취소" onclick="allReset()" class="btn btn-warning btn-sm me-1"/>
+          <input type="button" value="선택반전" onclick="reverseCheck()" class="btn btn-info btn-sm me-1"/>
+          <span>
+	          <select name="levelSelect" id="levelSelect">
+	            <option value="">등급선택</option>
+	            <option value="2">정회원</option>
+	            <option value="1">우수회원</option>
+	            <option value="3">준회원</option>
+	          </select>
+	          <input type="button" value="등급변경" onclick="levelSelectCheck()" class="btn btn-success btn-sm me-1"/>
+          </span>
+        </div>
+      </td>
       <td class="text-end">등급별조회
         <select name="levelView" id="levelView" onchange="levelViewCheck()">
           <option value="999" <c:if test="${level == 999}">selected</c:if> >전체회원</option>
@@ -109,58 +179,64 @@
     </tr>
   </table>  
   
-  <table class="table table-hover" id="userTable">
-    <tr class="table-secondary">
-      <th>번호</th>
-      <th>닉네임</th>
-      <th>아이디</th>
-      <th>성명</th>
-      <th>성별</th>
-      <th>생일</th>
-      <th>이메일</th>
-      <th>최종방문일</th>
-      <th>활동여부</th>
-      <th>현재레벨</th>
-    </tr>
-	  <c:forEach var="vo" items="${vos}" varStatus="st">
-	    <tr>
-	      <td>${curScrStartNo}</td>
-	      <td>${vo.nickName}</td>
-	      <c:if test="${vo.userInfor == '공개'}">
-		      <c:if test="${empty vo.content}"><c:set var="content" value="내용없음" /></c:if>
-		      <c:if test="${!empty vo.content}"><c:set var="content" value="${vo.content}" /></c:if>
-		      <td><a href="#" onclick='contentView("${content}")' data-bs-toggle="modal" data-bs-target="#myModal">${vo.mid}</a></td>
-		      <td>${vo.name}</td>
-		      <td>${vo.gender}</td>
-		      <td>${fn:substring(vo.birthday,0,10)}</td>
-		      <td>${vo.email}</td>
-		      <td>
-		        <c:if test="${sMid == vo.mid}">${fn:substring(sLastDate,0,16)}</c:if>
-		        <c:if test="${sMid != vo.mid}">${fn:substring(vo.lastDate,0,16)}</c:if>
-		      </td>
-	      </c:if>
-	      <c:if test="${vo.userInfor != '공개'}">
-	        <td colspan="6" class="text-center">비 공 개</td>
-	      </c:if>
-	      <td>
-	        <c:if test="${vo.userDel == 'OK'}"><c:set var="strUserDel" value="탈퇴신청중" /></c:if>
-	        <c:if test="${vo.userDel != 'OK'}"><c:set var="strUserDel" value="활동중" /></c:if>
-	        <c:if test="${vo.userDel == 'OK'}"><font color="red">${strUserDel}</font></c:if>
-	        <c:if test="${vo.userDel != 'OK'}">${strUserDel}</c:if>
-	      </td>
-	      <td>
-	        <select name="level" id="level" onchange="levelChange(this)">
-	          <option value="3/${vo.idx}"  ${vo.level == 3 ? 'selected' : ''}>준회원</option>
-	          <option value="2/${vo.idx}"  ${vo.level == 2 ? 'selected' : ''}>정회원</option>
-	          <option value="1/${vo.idx}"  ${vo.level == 1 ? 'selected' : ''}>우수회원</option>
-	          <option value="0/${vo.idx}"  ${vo.level == 0 ? 'selected' : ''}>관리자</option>
-	          <option value="99/${vo.idx}" ${vo.level == 99 ? 'selected' : ''}>탈퇴신청회원</option>
-	        </select>
-	      </td>
+  <form name="myform">
+	  <table class="table table-hover" id="userTable">
+	    <tr class="table-secondary">
+	      <th>번호</th>
+	      <th>닉네임</th>
+	      <th>아이디</th>
+	      <th>성명</th>
+	      <th>성별</th>
+	      <th>생일</th>
+	      <!-- <th>이메일</th> -->
+	      <th>최종방문일</th>
+	      <th>활동여부</th>
+	      <th>현재레벨</th>
 	    </tr>
-	    <c:set var="curScrStartNo" value="${curScrStartNo - 1}" />
-  	</c:forEach>
-  </table>
+		  <c:forEach var="vo" items="${vos}" varStatus="st">
+		    <tr>
+		      <td>
+		        <c:if test="${vo.level != 0}"><input type="checkbox" name="levelCheck" id="levelCheck${vo.idx}" value="${vo.idx}" /></c:if>
+		        <c:if test="${vo.level == 0}"><input type="checkbox" name="levelCheck" id="levelCheck${vo.idx}" value="${vo.idx}" disabled /></c:if>
+		        ${curScrStartNo}
+		      </td>
+		      <td>${vo.nickName}</td>
+		      <c:if test="${vo.userInfor == '공개'}">
+			      <c:if test="${empty vo.content}"><c:set var="content" value="내용없음" /></c:if>
+			      <c:if test="${!empty vo.content}"><c:set var="content" value="${vo.content}" /></c:if>
+			      <td><a href="#" onclick='contentView("${content}")' data-bs-toggle="modal" data-bs-target="#myModal">${vo.mid}</a></td>
+			      <td>${vo.name}</td>
+			      <td>${vo.gender}</td>
+			      <td>${fn:substring(vo.birthday,0,10)}</td>
+			      <%-- <td>${vo.email}</td> --%>
+			      <td>
+			        <c:if test="${sMid == vo.mid}">${fn:substring(sLastDate,0,16)}</c:if>
+			        <c:if test="${sMid != vo.mid}">${fn:substring(vo.lastDate,0,16)}</c:if>
+			      </td>
+		      </c:if>
+		      <c:if test="${vo.userInfor != '공개'}">
+		        <td colspan="5" class="text-center">비 공 개</td>
+		      </c:if>
+		      <td>
+		        <c:if test="${vo.userDel == 'OK'}"><c:set var="strUserDel" value="탈퇴신청중" /></c:if>
+		        <c:if test="${vo.userDel != 'OK'}"><c:set var="strUserDel" value="활동중" /></c:if>
+		        <c:if test="${vo.userDel == 'OK'}"><font color="red">${strUserDel}</font></c:if>
+		        <c:if test="${vo.userDel != 'OK'}">${strUserDel}</c:if>
+		      </td>
+		      <td>
+		        <select name="level" id="level" onchange="levelChange(this)">
+		          <option value="3/${vo.idx}"  ${vo.level == 3 ? 'selected' : ''}>준회원</option>
+		          <option value="2/${vo.idx}"  ${vo.level == 2 ? 'selected' : ''}>정회원</option>
+		          <option value="1/${vo.idx}"  ${vo.level == 1 ? 'selected' : ''}>우수회원</option>
+		          <option value="0/${vo.idx}"  ${vo.level == 0 ? 'selected' : ''}>관리자</option>
+		          <option value="99/${vo.idx}" ${vo.level == 99 ? 'selected' : ''}>탈퇴신청회원</option>
+		        </select>
+		      </td>
+		    </tr>
+		    <c:set var="curScrStartNo" value="${curScrStartNo - 1}" />
+	  	</c:forEach>
+	  </table>
+  </form>
   
 <!-- 블록페이지 시작 -->
 <div class="text-center">

@@ -27,6 +27,9 @@ public class PageProcess {
 		else if(section.equals("member")) {
 			
 		}
+		else if(section.equals("admin_board")) {
+			totRecCnt = boardDAO.getTotRecCnt();
+		}
 		
 		int totPage = (totRecCnt % pageSize)==0 ? (totRecCnt / pageSize) : (totRecCnt / pageSize) + 1;
 		int startIndexNo = (pag - 1) * pageSize;

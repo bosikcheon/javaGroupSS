@@ -16,15 +16,17 @@
 	</select>
 	
 	<select id="getBoardList" resultType="com.spring.javaGroupS.vo.BoardVO">
-		select *,datediff(wDate, now()) as date_diff,
-		  timestampdiff(hour, wDate, now()) as time_diff
-		  from board order by idx desc limit #{startIndexNo},#{pageSize};
+		select b.*,datediff(wDate, now()) as date_diff,
+		  timestampdiff(hour, wDate, now()) as time_diff,
+		  (select count(idx) from boardReply2 where boardIdx=b.idx) as replyCnt
+		  from board b order by idx desc limit #{startIndexNo},#{pageSize};
 	</select>
 	
 	<select id="getBoardListSearch" resultType="com.spring.javaGroupS.vo.BoardVO">
-		select *,datediff(wDate, now()) as date_diff,
-		  timestampdiff(hour, wDate, now()) as time_diff 
-			from board where ${search} like concat("%",#{searchString},"%") order by idx desc limit #{startIndexNo},#{pageSize};
+		select b.*,datediff(wDate, now()) as date_diff,
+		  timestampdiff(hour, wDate, now()) as time_diff,
+		  (select count(idx) from boardReply2 where boardIdx=b.idx) as replyCnt
+			from board b where ${search} like concat("%",#{searchString},"%") order by idx desc limit #{startIndexNo},#{pageSize};
 	</select>
 	
 	<select id="getBoardContent" resultType="com.spring.javaGroupS.vo.BoardVO">
@@ -35,12 +37,34 @@
 		select count(*) from board where wDate >= date_sub(now(), interval 7 day);
 	</select>
 
+	<select id="getPreNextSearch" resultType="com.spring.javaGroupS.vo.BoardVO">
+		select idx, title from board where 
+		<if test='str == "preVO"'> <![CDATA[idx < #{idx}]]> </if> 
+		<if test='str != "preVO"'> <![CDATA[idx > #{idx}]]> </if> 
+		order by idx <if test='str == "preVO"'> desc </if> limit 1;
+	</select>
+	
+	<select id="getBoardParentReplyCheck" resultType="com.spring.javaGroupS.vo.BoardReply2VO">
+		select * from boardReply2 where boardIdx = #{boardIdx} order by re_order desc limit 1;
+	</select>
+	
+	<select id="getBoardReplyList" resultType="com.spring.javaGroupS.vo.BoardReply2VO">
+		select * from boardReply2 where boardIdx = #{idx} order by re_order;
+	</select>
 
 
 	<insert id="setBoardInput">
 	  insert into board values (default,#{vo.mid},#{vo.nickName},#{vo.title},#{vo.content},#{vo.hostIp},#{vo.openSw},default,default,default,default);
 	</insert>
 	
+	<insert id="setBoardReplyInput">
+	  insert into boardReply2 values (default,#{replyVO.boardIdx},#{replyVO.re_step},#{replyVO.re_order},#{replyVO.mid},#{replyVO.nickName},#{replyVO.content},#{replyVO.hostIp},default);
+	</insert>
+	<!-- 
+	<insert id="setBoardReplyInputRe">
+		insert into boardReply2 values (default,#{replyVO.boardIdx},#{replyVO.re_step},#{replyVO.re_order},#{replyVO.mid},#{replyVO.nickName},#{replyVO.content},#{replyVO.hostIp},default);
+	</insert>
+	 -->
 	
 	
 	<update id="setReadNumPlus">
@@ -59,10 +83,18 @@
 	  update board set good = good + #{goodCnt} where idx = #{idx};
 	</update>
 	
+	<update id="setReplyOrderUpdate">
+	  update boardReply2 set re_order = re_order + 1 where boardIdx = #{boardIdx} and re_order > #{re_order};
+	</update>
+	
 	
 	
 	<delete id="setBoardDelete">
 		delete from board where idx = #{idx};
+	</delete>
+	
+	<delete id="setBoardReplyDelete">
+	  delete from boardReply2 where idx = #{idx};
 	</delete>
 
 </mapper>

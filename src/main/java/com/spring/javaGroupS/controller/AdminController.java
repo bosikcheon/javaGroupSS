@@ -10,10 +10,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.spring.javaGroupS.pagination.PageProcess;
+import com.spring.javaGroupS.pagination.PageVO;
 import com.spring.javaGroupS.service.AdminService;
 import com.spring.javaGroupS.service.BoardService;
 import com.spring.javaGroupS.service.GuestService;
 import com.spring.javaGroupS.service.MemberService;
+import com.spring.javaGroupS.vo.BoardVO;
 import com.spring.javaGroupS.vo.MemberVO;
 
 @Controller
@@ -31,6 +34,9 @@ public class AdminController {
 	
 	@Autowired
 	BoardService boardService;
+	
+	@Autowired
+	PageProcess pageProcess;
 	
 	@RequestMapping(value = "/adminMain", method = RequestMethod.GET)
 	public String adminMainGet() {
@@ -95,6 +101,28 @@ public class AdminController {
 	@RequestMapping(value = "/member/memberLevelChange", method = RequestMethod.POST)
 	public String memberLevelChangeGet(int idx, int level) {
 		return adminService.setMemberLevelChange(idx, level) + "";
+	}
+	
+	@RequestMapping(value = "/board/boardList", method = RequestMethod.GET)
+	public String boardListGet(Model model,
+			@RequestParam(name="pag", defaultValue = "1", required = false) int pag,
+			@RequestParam(name="pageSize", defaultValue = "10", required = false) int pageSize
+		) {
+		PageVO pageVO = pageProcess.totRecCnt(pag, pageSize, "admin_board", "", "");
+		
+		List<BoardVO> vos = boardService.getBoardList(pageVO.getStartIndexNo(), pageSize);
+		
+		model.addAttribute("vos", vos);
+		model.addAttribute("pageVO", pageVO);
+		
+		return "admin/board/boardList";
+	}
+	
+	// 선택한 회원들의 전체 등급 변경처리
+	@ResponseBody
+	@RequestMapping(value = "/member/memberLevelSelectCheck", method = RequestMethod.POST)
+	public String memberLevelSelectCheckPost(int levelSelect, String idxSelectArray) {
+		return adminService.setMemberLevelSelectCheck(levelSelect, idxSelectArray);
 	}
 	
 }
