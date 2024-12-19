@@ -42,6 +42,8 @@
 	        <a href="${ctp}/dbtest/dbtestList" class="w3-bar-item w3-button">DB Test</a>
 	        <a href="${ctp}/study/ajax/ajaxForm" class="w3-bar-item w3-button">Ajax Test</a>
 	        <a href="${ctp}/study/mail/mailForm" class="w3-bar-item w3-button">메일보내기</a>
+	        <a href="${ctp}/study/random/randomAlphaNumeric" class="w3-bar-item w3-button">랜덤알파뉴메릭</a>
+	        <a href="${ctp}/study/fileUpload/fileUpload" class="w3-bar-item w3-button">파일업로드연습</a>
 	      </div>
 	    </div>
 	    <div class="w3-dropdown-hover w3-hide-small">

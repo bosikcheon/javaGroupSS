@@ -39,6 +39,7 @@ select count(*) from board where wDate >= date_sub(now(), interval 7 day);
 create table boardReply2 (
   idx      int not null auto_increment, /* 댓글의 고유번호 */
   boardIdx int not null,								/* 원본글(부모글)의 고유번호 - 외래키 지정 */
+  ref      int not null,								/* 부모댓글이면 ref=0이다. 대댓글일경우는 부모댓글의 idx값이 된다.(댓글 삭제시 자신의 하위댓글이 있으면 자신은 '삭제되었습니다.'라는 메세지 표시하기위함) */
   re_step  int not null,								/* 레벨(re_step)에 따른 들려쓰기(계층번호) -  */
   re_order int not null,								/* 댓글의 순서를 결정 -  */
   mid      varchar(30) not null,				/* 댓글 올린이의 아이디 */
@@ -63,3 +64,5 @@ select * from boardReply2;
 select * from board order by idx desc;
 select b.*, r.content from board b, boardReply2 r where b.idx=r.boardIdx order by idx desc;
 select b.*, (select count(idx) from boardReply2 where boardIdx=b.idx) from board b order by idx desc;
+
+select count(*) from boardRePly2 where ref = 8;

@@ -51,6 +51,23 @@
 	<select id="getBoardReplyList" resultType="com.spring.javaGroupS.vo.BoardReply2VO">
 		select * from boardReply2 where boardIdx = #{idx} order by re_order;
 	</select>
+	
+	<select id="getIdxRefSearch" resultType="int">
+		select count(*) from boardRePly2 where ref = #{idx};
+	</select>
+	
+	<select id="getBoardReplyRefSearch" resultType="int">
+		select count(*) from boardRePly2 where ref = #{ref};
+	</select>
+	
+	<select id="getBoardReplyParentRefSearch" resultType="int">
+		select ref from boardRePly2 where idx = #{idx};
+	</select>
+	
+	<select id="getBoardReplyNickName" resultType="com.spring.javaGroupS.vo.BoardReply2VO">
+		select * from boardRePly2 where idx = #{ref};
+	</select>
+	
 
 
 	<insert id="setBoardInput">
@@ -58,7 +75,7 @@
 	</insert>
 	
 	<insert id="setBoardReplyInput">
-	  insert into boardReply2 values (default,#{replyVO.boardIdx},#{replyVO.re_step},#{replyVO.re_order},#{replyVO.mid},#{replyVO.nickName},#{replyVO.content},#{replyVO.hostIp},default);
+	  insert into boardReply2 values (default,#{replyVO.boardIdx},#{replyVO.ref},#{replyVO.re_step},#{replyVO.re_order},#{replyVO.mid},#{replyVO.nickName},#{replyVO.content},#{replyVO.hostIp},default);
 	</insert>
 	<!-- 
 	<insert id="setBoardReplyInputRe">
@@ -85,6 +102,14 @@
 	
 	<update id="setReplyOrderUpdate">
 	  update boardReply2 set re_order = re_order + 1 where boardIdx = #{boardIdx} and re_order > #{re_order};
+	</update>
+	
+	<update id="setBoardReplyUpdate">
+	  update boardReply2 set content = #{replyVO.content}, hostIp =  #{replyVO.hostIp}, wDate = now() where idx = #{replyVO.idx};
+	</update>
+	
+	<update id="setBoardReplyDeleteCheck">
+	  update boardReply2 set nickName = '-', content = '삭제된 글입니다.' where idx = #{idx};
 	</update>
 	
 	

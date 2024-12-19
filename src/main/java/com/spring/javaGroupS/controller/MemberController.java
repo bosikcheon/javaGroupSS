@@ -149,11 +149,21 @@ public class MemberController {
 		return "redirect:/message/memberLogout";
 	}
 	
-	// 회원 아이디 중복체크
+	// 회원 아이디 로그인체크
 	@ResponseBody
 	@RequestMapping(value = "/memberIdCheck", method = RequestMethod.POST)
 	public String memberIdCheckPost(String mid) {
 		MemberVO vo = memberService.getMemberIdCheck(mid);
+		String str = "0";
+		if(vo != null) str = "1";
+		return str;
+	}
+	
+	// 회원 아이디 중복체크
+	@ResponseBody
+	@RequestMapping(value = "/memberIdDuplicationCheck", method = RequestMethod.POST)
+	public String memberIdDuplicationCheckPost(String mid) {
+		MemberVO vo = memberService.getMemberIdDuplicationCheck(mid);
 		String str = "0";
 		if(vo != null) str = "1";
 		return str;

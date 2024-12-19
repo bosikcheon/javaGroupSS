@@ -35,4 +35,6 @@ public interface MemberService {
 
 	int getLevelCnt(int level);
 
+	MemberVO getMemberIdDuplicationCheck(String mid);
+
 }

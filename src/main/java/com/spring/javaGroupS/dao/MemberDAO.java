@@ -37,4 +37,6 @@ public interface MemberDAO {
 
 	int getLevelCnt(@Param("level") int level);
 
+	MemberVO getMemberIdDuplicationCheck(@Param("mid") String mid);
+
 }

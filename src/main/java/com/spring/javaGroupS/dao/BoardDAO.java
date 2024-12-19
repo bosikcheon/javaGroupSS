@@ -47,4 +47,16 @@ public interface BoardDAO {
 
 	int setBoardReplyDelete(@Param("idx") int idx);
 
+	int setBoardReplyUpdate(@Param("replyVO") BoardReply2VO replyVO);
+
+	int getIdxRefSearch(@Param("idx") int idx);
+
+	void setBoardReplyDeleteCheck(@Param("idx") int idx);
+
+	int getBoardReplyRefSearch(@Param("ref") int ref);
+
+	int getBoardReplyParentRefSearch(@Param("idx") int idx);
+
+	BoardReply2VO getBoardReplyNickName(@Param("ref") int ref);
+
 }

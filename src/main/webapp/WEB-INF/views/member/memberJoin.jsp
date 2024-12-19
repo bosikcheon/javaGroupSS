@@ -113,7 +113,7 @@
     	else {
     		$.ajax({
     			type : "post",
-    			url  : "${ctp}/member/memberIdCheck",
+    			url  : "${ctp}/member/memberIdDuplicationCheck",
     			data : {mid : mid},
     			success:function(res) {
     				if(res != "0") alert("이미 사용중인 아이디 입니다.\n다른 아이디를 사용하세요.");

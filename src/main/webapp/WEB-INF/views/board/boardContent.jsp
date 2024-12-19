@@ -83,8 +83,13 @@
     
     // 대댓글의 입력버튼 클릭시 입력박스 보여주기
     function replyShow(idx) {
+    	$(".replyDemo").hide();
+    	$(".replyCloseBtn").hide();
+    	$(".replyShowBtn").show();
+    	
     	$("#replyShowBtn"+idx).hide();
     	$("#replyCloseBtn"+idx).show();
+    	$(".replyUpdateForm").hide();
     	//$("#replyDemo"+idx).show();
     	$("#replyDemo"+idx).slideDown(100);
     }
@@ -97,7 +102,7 @@
     	$("#replyDemo"+idx).slideUp(300);
     }
     
-    // 대댓글(부모글의 댓글)의 입력철리
+    // 대댓글(부모글의 댓글)의 입력처리
     function replyCheckRe(idx, re_step, re_order) {
     	let contentRe = $("#contentRe"+idx).val();
     	if(contentRe.trim() == "") {
@@ -108,6 +113,7 @@
     	
     	let query = {
     			boardIdx 	: ${vo.idx},
+    			ref				: idx,
     			re_step  	: re_step,
     			re_order 	: re_order,
     			mid				: '${sMid}',
@@ -211,14 +217,18 @@
     }
     
     // 댓글 삭제처리
-    function replyDeleteCheck(idx) {
+    function replyDeleteCheck(idx, ref, nickName) {
     	let ans = confirm("선택한 댓글을 삭제하시겠습니까?");
     	if(!ans) return false;
     	
     	$.ajax({
     		type : "post",
     		url  : "boardReplyDelete",
-    		data : {idx : idx},
+    		data : {
+    			idx : idx,
+    			ref : ref,
+    			nickName : nickName
+    		},
     		success:function(res) {
     			if(res != "0") {
     				alert("댓글이 삭제 되었습니다.");
@@ -234,6 +244,10 @@
     
     // 댓글 수정창 보여주기
     function replyDeleteUpdateCheck(idx) {
+    	$(".replyDemo").hide();
+    	$(".replyCloseBtn").hide();
+    	$(".replyShowBtn").show();
+    	
     	$(".replyUpdateForm").hide();
     	$("#replyUpdateForm"+idx).show();
     }
@@ -253,7 +267,7 @@
     	
     	$.ajax({
     		type : "post",
-    		url  : "BoardReplyUpdate.bo",
+    		url  : "boardReplyUpdate",
     		data : query,
     		success:function(res) {
     			if(res != "0") {
@@ -367,30 +381,33 @@
 	      <th>답글</th>
 	    </tr>
 	    <c:forEach var="replyVO" items="${replyVos}" varStatus="st">
-	      <tr>
-	        <td class="text-start">
-	          <c:if test="${replyVO.re_step >= 1}">
-	            <c:forEach var="i" begin="1" end="${replyVO.re_step}"> &nbsp;&nbsp;</c:forEach> └▶
-	          </c:if>
-	          ${replyVO.nickName}
-	          <c:if test="${sMid == replyVO.mid || sLevel == 0}">
-	            (<a href="javascript:replyDeleteCheck(${replyVO.idx})" title="댓글삭제">x</a>
-	            <c:if test="${sMid == replyVO.mid}">
-	              <a href="javascript:replyDeleteUpdateCheck(${replyVO.idx})" title="댓글수정">√</a>
-	            </c:if>)
-	          </c:if>
-	        </td>
-	        <td class="text-start">${fn:replace(replyVO.content,newLine,"<br/>")}</td>
-	        <td>${fn:substring(replyVO.WDate,0,10)}</td>
-	        <td>${replyVO.hostIp}</td>
-	        <td>
-	        	<a href="javascript:replyShow(${replyVO.idx})" id="replyShowBtn${replyVO.idx}"><span class="badge text-bg-success">답글</span></a>
-	        	<a href="javascript:replyClose(${replyVO.idx})" id="replyCloseBtn${replyVO.idx}" class="replyCloseBtn"><span class="badge text-bg-warning">닫기</span></a>
-	        </td>
-	      </tr>
+        <c:if test="${replyVO.nickName != '-'}">
+		      <tr>
+		        <td class="text-start">:${replyVO.idx}/${replyVO.ref}:
+			          <c:if test="${replyVO.re_step >= 1}">
+			            <c:forEach var="i" begin="1" end="${replyVO.re_step}"> &nbsp;&nbsp;</c:forEach> └▶
+			          </c:if>
+			          ${replyVO.nickName}
+			          <c:if test="${sMid == replyVO.mid || sLevel == 0}">
+			            (<a href="javascript:replyDeleteCheck('${replyVO.idx}','${replyVO.ref}','${replyVO.nickName}')" title="댓글삭제">x</a>
+			            <c:if test="${sMid == replyVO.mid}">
+			              <a href="javascript:replyDeleteUpdateCheck(${replyVO.idx})" title="댓글수정">√</a>
+			            </c:if>)
+			          </c:if>
+		        </td>
+		        <td class="text-start">${fn:replace(replyVO.content,newLine,"<br/>")}</td>
+		        <td>${fn:substring(replyVO.WDate,0,10)}</td>
+		        <td>${replyVO.hostIp}</td>
+		        <td>
+		        	<a href="javascript:replyShow(${replyVO.idx})" id="replyShowBtn${replyVO.idx}" class="replyShowBtn"><span class="badge text-bg-success">답글</span></a>
+		        	<a href="javascript:replyClose(${replyVO.idx})" id="replyCloseBtn${replyVO.idx}" class="replyCloseBtn"><span class="badge text-bg-warning">닫기</span></a>
+		        </td>
+		      </tr>
+        </c:if>
+        <c:if test="${replyVO.nickName == '-'}"><tr><td colspan="5" class="text-start ps-4">삭제된 글입니다.</td></tr></c:if>
 	      <tr>
 	        <td colspan="5" class="m-0 p-0" style="border:none;">
-	        	<div id="replyDemo${replyVO.idx}" style="display:none;">
+	        	<div id="replyDemo${replyVO.idx}" style="display:none;" class="replyDemo">
 					    <table class="table table-borderless text-center">
 					      <tr>
 					        <td style="width:85%" class="text-start">답글내용 :
@@ -407,31 +424,33 @@
 	        	</div>
 	        </td>
 	      </tr>
-	      <!-- 
+	      
 	      <tr>
-	        <td colspan="4" class="m-0 p-0" style="border:none;">
+	        <td colspan="5" class="m-0 p-0" style="border:none;">
 	        	<div id="replyUpdateForm${replyVO.idx}" class="replyUpdateForm">
 	        	  <form name="replyUpdateForm">
-						    <table class="table table-borderless text-center">
-						      <tr>
-						        <td style="width:85%" class="text-left">
+						    <table class="table table-borderless text-center m-0 bg-info">
+						      <tr class="text-center">
+						        <td style="width:5%"></td>
+						        <td style="width:75%" class="text-start">
 						          글내용 :
 						          <textarea rows="4" name="content" id="content${replyVO.idx}" class="form-control">${replyVO.content}</textarea>
 						        </td>
 						        <td style="width:15%"><br/>
 						          <p>작성자 : ${sNickName}</p>
 						          <p>
-						            <a href="javascript:replyUpdateCheck(${replyVO.idx})" class="badge badge-primary">댓글수정</a><br/>
-						            <a href="javascript:replyUpdateViewClose(${replyVO.idx})" class="badge badge-warning">창닫기</a>
+						            <a href="javascript:replyUpdateCheck(${replyVO.idx})"><span class="badge bg-primary">댓글수정</span></a><br/>
+						            <a href="javascript:replyUpdateViewClose(${replyVO.idx})"><span class="badge bg-warning">창닫기</span></a>
 						          </p>
 						        </td>
 						      </tr>
+						      <tr><td colspan="3" class="p-1 bg-secondary"></td></tr>
 						    </table>
 						  </form>
 	        	</div>
 	        </td>
 	      </tr>
-	       -->
+	      
 	    </c:forEach>
 	    <!-- <tr><td colspan="5" class="m-0 p-0"></td></tr> -->
 	  </table>

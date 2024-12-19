@@ -237,12 +237,14 @@ public class BoardController {
 		return res;
 	}
 	
+	// 부모댓글 입력처리
 	@ResponseBody
 	@RequestMapping(value = "/boardReplyInput", method = RequestMethod.POST)
 	public String boardReplyInputPost(BoardReply2VO replyVO) {
-		// 부모댓글의 경우는 re_step=0, 처음 re_order=1로 처리.(단, 2번째 이상부터는 마지막댓글의 re_order+1로 처리)
+		// 부모댓글의 경우는 ref=0, re_step=0, 처음 re_order=1로 처리.(단, 2번째 이상부터는 마지막댓글의 re_order+1로 처리)
 		BoardReply2VO replyParentVO = boardService.getBoardParentReplyCheck(replyVO.getBoardIdx());
 		
+		replyVO.setRef(0);
 		replyVO.setRe_step(0);
 		
 		if(replyParentVO == null) replyVO.setRe_order(1);
@@ -255,8 +257,9 @@ public class BoardController {
 	@ResponseBody
 	@RequestMapping(value = "/boardReplyInputRe", method = RequestMethod.POST)
 	public String boardReplyInputRePost(BoardReply2VO replyVO) {
-		// 대댓글(부모댓글의 댓글/답변글)의 경우는 re_step=re_step+1, re_order는 부모의 re_order보다 큰 댓글은 모두 re_order+1로 처리, 그리고 자신은 부모의 re_order+1 처리한다.
+		// 대댓글(부모댓글의 댓글/답변글)의 경우는 ref는 부모댓글의 idx를, re_step=re_step+1, re_order는 부모의 re_order보다 큰 댓글은 모두 re_order+1로 처리, 그리고 자신은 부모의 re_order+1 처리한다.
 		
+		//replyVO.setRef(replyVO.getRef());
 		replyVO.setRe_step(replyVO.getRe_step() + 1);
 		
 		boardService.setReplyOrderUpdate(replyVO.getBoardIdx(), replyVO.getRe_order());
@@ -269,9 +272,18 @@ public class BoardController {
 	// 대댓글 삭제....
 	@ResponseBody
 	@RequestMapping(value = "/boardReplyDelete", method = RequestMethod.POST)
-	public String boardReplyDeletePost(int idx) {
-
-		return boardService.setBoardReplyDelete(idx) + "";
+	public String boardReplyDeletePost(int idx, int ref, String nickName) {
+		// 자신의 idx를 다른 댓글들의 ref필드가 가지고 있는지를 검색한다. 없다면 해당글을 삭제하면 된다. 그러나 만약 있다면 자신의 댓글이 존재하기에 자신의 nickName필드에는 '-'을, content필드에는 '삭제된 댓글입니다.'를 넣어준다.
+		// 또한 삭제시는 ref필드의 내용을 보고, ref변수 안의 번호가 자신외에 다른댓글의 ref변수안에도 있는지 찾아보고, 없다라면 자신이 참조하고 있는 댓글의 nickName이 '-'일 경우에는 함께 삭제할수 있도록 처리하여야 한다.(상위쪽도 모두 검색해서 삭제되었는지 체크해야함)
+		// 앞의 조건에 대한 처리는 모두 서비스단에서 처리하도록 하자.
+		return boardService.setBoardReplyDelete(idx, ref, nickName);
 	}
 
+	// 대댓글 수정처리
+	@ResponseBody
+	@RequestMapping(value = "/boardReplyUpdate", method = RequestMethod.POST)
+	public String boardReplyUpdatePost(BoardReply2VO replyVO) {
+		return boardService.setBoardReplyUpdate(replyVO) + "";
+	}
+	
 }

@@ -6,6 +6,7 @@ import lombok.Data;
 public class BoardReply2VO {
 	private int idx;
 	private int boardIdx;
+	private int ref;
 	private int re_step;
 	private int re_order;
 	private String mid;

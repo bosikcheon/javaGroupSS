@@ -4,12 +4,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.spring.javaGroupS.dao.BoardDAO;
+import com.spring.javaGroupS.dao.PdsDAO;
 
 @Service
 public class PageProcess {
 	
 	@Autowired
 	BoardDAO boardDAO;
+	
+	@Autowired
+	PdsDAO pdsDAO;
 
 	public PageVO totRecCnt(int pag, int pageSize, String section, String part, String searchString) {
 		PageVO pageVO = new PageVO();
@@ -29,6 +33,9 @@ public class PageProcess {
 		}
 		else if(section.equals("admin_board")) {
 			totRecCnt = boardDAO.getTotRecCnt();
+		}
+		else if(section.equals("pds")) {
+			totRecCnt = pdsDAO.getTotRecCnt(part);
 		}
 		
 		int totPage = (totRecCnt % pageSize)==0 ? (totRecCnt / pageSize) : (totRecCnt / pageSize) + 1;
@@ -50,6 +57,8 @@ public class PageProcess {
 		
 		pageVO.setSearch(search);
 		pageVO.setSearchString(searchString);
+
+		pageVO.setPart(part);
 		
 		// 검색기에서 search와 searchString를 처리할때 사용.
 		String searchTitle = "";

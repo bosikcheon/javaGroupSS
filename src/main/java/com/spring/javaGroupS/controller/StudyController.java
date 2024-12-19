@@ -1,13 +1,16 @@
 package com.spring.javaGroupS.controller;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -17,6 +20,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.spring.javaGroupS.service.DbtestService;
 import com.spring.javaGroupS.service.MemberService;
@@ -180,6 +185,107 @@ public class StudyController {
 		mailSender.send(message);
 		
 		return "redirect:/message/mailSendOk";
+	}
+	
+	// 랜덤한 영문자와 숫자 조합연습
+	@RequestMapping(value = "/random/randomAlphaNumeric", method = RequestMethod.GET)
+	public String randomAlphaNumericGet() {
+		return "study/random/randomForm";
+	}
+	
+	// 랜덤한 숫자 조합연습
+	@ResponseBody
+	@RequestMapping(value = "/random/randomNumeric", method = RequestMethod.POST)
+	public String randomNumericPost() {
+		return ((int) (Math.random()*(99999999-10000000+1)) + 10000000) + "";
+	}
+	
+	// 랜덤한 UUID 조합연습
+	@ResponseBody
+	@RequestMapping(value = "/random/randomUUID", method = RequestMethod.POST)
+	public String randomUUIDPost() {
+		return UUID.randomUUID() + "";
+	}
+	
+	// 랜덤한 영문자와 숫자 조합연습
+	@ResponseBody
+	@RequestMapping(value = "/random/randomAlphaNumeric", method = RequestMethod.POST)
+	public String randomAlphaNumericPost() {
+		//String res = RandomStringUtils.randomAlphanumeric(32);
+		return RandomStringUtils.randomAlphanumeric(64);
+	}
+	
+	// 파일 업로드 폼 불러오기
+	@RequestMapping(value = "/fileUpload/fileUpload", method = RequestMethod.GET)
+	public String fileUploadGet(HttpServletRequest request, Model model) {
+		String realPath = request.getSession().getServletContext().getRealPath("/resources/data/fileUpload");
+		
+		String[] files = new File(realPath).list();
+		
+		model.addAttribute("files", files);
+		model.addAttribute("fileCount", files.length);
+		
+		return "study/fileUpload/fileUpload";
+	}
+	
+	// 싱글파일 업로드 처리
+	@RequestMapping(value = "/fileUpload/fileUpload", method = RequestMethod.POST)
+	public String fileUploadPost(MultipartFile fName, String mid) {
+		int res = studyService.fileUpload(fName, mid);
+		
+		if(res != 0) return "redirect:/message/fileUploadOk";
+		else return "redirect:/message/fileUploadNo";
+	}
+	
+	// 파일 삭제 처리
+	@ResponseBody
+	@RequestMapping(value = "/fileUpload/fileDelete", method = RequestMethod.POST)
+	public String fileDeletePost(HttpServletRequest request, String file) {
+		String realPath = request.getSession().getServletContext().getRealPath("/resources/data/fileUpload/");
+		String res = "0";
+		File fName = new File(realPath + file);
+		if(fName.exists()) {
+			fName.delete();
+			res = "1";
+		}
+		return res;
+	}
+	
+	// 파일 전체삭제 처리
+	@ResponseBody
+	@RequestMapping(value = "/fileUpload/fileDeleteAll", method = RequestMethod.POST)
+	public String fileDeleteAllPost(HttpServletRequest request) {
+		String realPath = request.getSession().getServletContext().getRealPath("/resources/data/fileUpload/");
+		String res = "0";
+		File folder = new File(realPath);
+		if(!folder.exists()) return res;
+		
+		File[] files = folder.listFiles();
+		
+		if(files.length != 0) {
+			for(File f : files) {
+				if(f.exists()) {
+					f.delete();
+					res = "1";
+				}
+			}
+		}
+		return res;
+	}
+	
+	// 멀티파일 업로드 폼 불러오기
+	@RequestMapping(value = "/fileUpload/multiFile", method = RequestMethod.GET)
+	public String multiFileGet() {
+		return "study/fileUpload/multiFile";
+	}
+	
+	// 멀티파일 업로드 처리
+	@RequestMapping(value = "/fileUpload/multiFile", method = RequestMethod.POST)
+	public String multiFilePost(MultipartHttpServletRequest mFile, HttpServletRequest request) {
+		int res = studyService.multiFileUpload(mFile, request);
+		
+		if(res != 0) return "redirect:/message/multiFileUploadOk";
+		else return "redirect:/message/multiFileUploadNo";
 	}
 	
 	

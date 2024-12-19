@@ -85,4 +85,9 @@ public class MemberServiceImpl implements MemberService {
 		return memberDAO.getLevelCnt(level);
 	}
 
+	@Override
+	public MemberVO getMemberIdDuplicationCheck(String mid) {
+		return memberDAO.getMemberIdDuplicationCheck(mid);
+	}
+
 }

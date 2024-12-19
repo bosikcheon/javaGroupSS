@@ -31,6 +31,14 @@ public class MessageController {
 			model.addAttribute("message", "로그아웃 되셨습니다.");
 			model.addAttribute("url", "member/memberLogin");
 		}
+		else if(msgFlag.equals("memberLevelNo")) {
+			model.addAttribute("message", "회원등급을 확인하세요.");
+			model.addAttribute("url", "member/memberMain");
+		}
+		else if(msgFlag.equals("loginNo")) {
+			model.addAttribute("message", "로그인후 사용하세요.");
+			model.addAttribute("url", "member/memberLogin");
+		}
 		else if(msgFlag.equals("userInputOk")) {
 			model.addAttribute("message", "회원에 가입 되셨습니다.");
 			model.addAttribute("url", "user/userMain");
@@ -106,6 +114,10 @@ public class MessageController {
 		else if(msgFlag.equals("adminNo")) {
 			model.addAttribute("message", "관리자 인증 실패");
 			model.addAttribute("url", "guest/guestList");
+		}
+		else if(msgFlag.equals("adminLevelNo")) {
+			model.addAttribute("message", "관리자만 접속가능합니다.");
+			model.addAttribute("url", "index");
 		}
 		else if(msgFlag.equals("adminOut")) {
 			model.addAttribute("message", "관리자 로그아웃");
@@ -186,6 +198,30 @@ public class MessageController {
 		else if(msgFlag.equals("boardUpdateNo")) {
 			model.addAttribute("message", "게시판 글 수정실패~~");
 			model.addAttribute("url", "board/boardUpdate?idx="+idx+"&pag="+pag+"&pageSize="+pageSize);
+		}
+		else if(msgFlag.equals("fileUploadOk")) {
+			model.addAttribute("message", "파일 업로드 성공");
+			model.addAttribute("url", "study/fileUpload/fileUpload");
+		}
+		else if(msgFlag.equals("fileUploadNo")) {
+			model.addAttribute("message", "파일 업로드 실패~~");
+			model.addAttribute("url", "study/fileUpload/fileUpload");
+		}
+		else if(msgFlag.equals("multiFileUploadOk")) {
+			model.addAttribute("message", "파일 업로드 성공");
+			model.addAttribute("url", "study/fileUpload/multiFile");
+		}
+		else if(msgFlag.equals("multiFileUploadNo")) {
+			model.addAttribute("message", "파일 업로드 실패~~");
+			model.addAttribute("url", "study/fileUpload/multiFile");
+		}
+		else if(msgFlag.equals("pdsInputOk")) {
+			model.addAttribute("message", "자료실 업로드 성공");
+			model.addAttribute("url", "pds/pdsList");
+		}
+		else if(msgFlag.equals("pdsInputNo")) {
+			model.addAttribute("message", "자료실 업로드 실패~~");
+			model.addAttribute("url", "pds/pdsInput");
 		}
 		
 		

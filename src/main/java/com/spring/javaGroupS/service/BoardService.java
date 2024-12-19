@@ -47,6 +47,8 @@ public interface BoardService {
 
 	int setBoardReplyInputRe(BoardReply2VO replyVO);
 
-	int setBoardReplyDelete(int idx);
+	String setBoardReplyDelete(int idx, int ref, String nickName);
+
+	int setBoardReplyUpdate(BoardReply2VO replyVO);
 
 }

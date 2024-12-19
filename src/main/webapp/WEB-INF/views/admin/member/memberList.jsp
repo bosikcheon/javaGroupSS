@@ -150,31 +150,37 @@
   
   <table class="table table-borderless m-0">
     <tr>
-      <td class="text-start">
-        <div>
-          <input type="button" value="전체선택" onclick="allCheck()" class="btn btn-success btn-sm me-1"/>
-          <input type="button" value="전체취소" onclick="allReset()" class="btn btn-warning btn-sm me-1"/>
-          <input type="button" value="선택반전" onclick="reverseCheck()" class="btn btn-info btn-sm me-1"/>
-          <span>
-	          <select name="levelSelect" id="levelSelect">
-	            <option value="">등급선택</option>
-	            <option value="2">정회원</option>
-	            <option value="1">우수회원</option>
-	            <option value="3">준회원</option>
-	          </select>
-	          <input type="button" value="등급변경" onclick="levelSelectCheck()" class="btn btn-success btn-sm me-1"/>
-          </span>
+      <td>
+        <div class="row">
+          <div class="col-7">
+		        <div class="input-group">
+		          <input type="button" value="전체선택" onclick="allCheck()" class="btn btn-success btn-sm me-1"/>
+		          <input type="button" value="전체취소" onclick="allReset()" class="btn btn-warning btn-sm me-1"/>
+		          <input type="button" value="선택반전" onclick="reverseCheck()" class="btn btn-info btn-sm me-2"/>
+		          <select name="levelSelect" id="levelSelect" class="form-select">
+		            <option value="">등급선택</option>
+		            <option value="2">정회원</option>
+		            <option value="1">우수회원</option>
+		            <option value="3">준회원</option>
+		          </select>
+		          <input type="button" value="선택항목등급변경" onclick="levelSelectCheck()" class="btn btn-success btn-sm me-1"/>
+		        </div>
+	        </div>
+	        <div class="col-2"></div>
+	        <div class="col-3">
+		        <div class="input-group">
+			        <span class="input-group-text" style="background-color:#ddd">등급별조회</span>
+			        <select name="levelView" id="levelView" onchange="levelViewCheck()" class="form-select">
+			          <option value="999" <c:if test="${level == 999}">selected</c:if> >전체회원</option>
+			          <option value="3"   <c:if test="${level == 3}" >selected</c:if> >준회원</option>
+			          <option value="2"   <c:if test="${level == 2}" >selected</c:if> >정회원</option>
+			          <option value="1"   <c:if test="${level == 1}" >selected</c:if> >우수회원</option>
+			          <option value="99"  <c:if test="${level == 99}">selected</c:if> >탈퇴신청회원</option>
+			          <option value="0"   <c:if test="${level == 0}" >selected</c:if>  >관리자</option>
+			        </select>
+		        </div>
+	        </div>
         </div>
-      </td>
-      <td class="text-end">등급별조회
-        <select name="levelView" id="levelView" onchange="levelViewCheck()">
-          <option value="999" <c:if test="${level == 999}">selected</c:if> >전체회원</option>
-          <option value="3"   <c:if test="${level == 3}" >selected</c:if> >준회원</option>
-          <option value="2"   <c:if test="${level == 2}" >selected</c:if> >정회원</option>
-          <option value="1"   <c:if test="${level == 1}" >selected</c:if> >우수회원</option>
-          <option value="99"  <c:if test="${level == 99}">selected</c:if> >탈퇴신청회원</option>
-          <option value="0"   <c:if test="${level == 0}" >selected</c:if>  >관리자</option>
-        </select>
       </td>
     </tr>
   </table>  
@@ -196,8 +202,8 @@
 		  <c:forEach var="vo" items="${vos}" varStatus="st">
 		    <tr>
 		      <td>
-		        <c:if test="${vo.level != 0}"><input type="checkbox" name="levelCheck" id="levelCheck${vo.idx}" value="${vo.idx}" /></c:if>
-		        <c:if test="${vo.level == 0}"><input type="checkbox" name="levelCheck" id="levelCheck${vo.idx}" value="${vo.idx}" disabled /></c:if>
+		        <c:if test="${vo.level != 0}"><input type="checkbox" name="levelCheck" id="levelCheck${vo.idx}" value="${vo.idx}" class="form-check-input" /></c:if>
+		        <c:if test="${vo.level == 0}"><input type="checkbox" name="levelCheck" id="levelCheck${vo.idx}" value="${vo.idx}" disabled class="form-check-input"/></c:if>
 		        ${curScrStartNo}
 		      </td>
 		      <td>${vo.nickName}</td>
@@ -224,7 +230,7 @@
 		        <c:if test="${vo.userDel != 'OK'}">${strUserDel}</c:if>
 		      </td>
 		      <td>
-		        <select name="level" id="level" onchange="levelChange(this)">
+		        <select name="level" id="level" onchange="levelChange(this)" class="form-select-sm">
 		          <option value="3/${vo.idx}"  ${vo.level == 3 ? 'selected' : ''}>준회원</option>
 		          <option value="2/${vo.idx}"  ${vo.level == 2 ? 'selected' : ''}>정회원</option>
 		          <option value="1/${vo.idx}"  ${vo.level == 1 ? 'selected' : ''}>우수회원</option>

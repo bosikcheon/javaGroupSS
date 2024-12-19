@@ -21,6 +21,8 @@
 	<resources mapping="/member/**" location="/resources/data/member/" />
 	<resources mapping="/ckeditor/**" location="/resources/ckeditor/" />
 	<resources mapping="/board/**" location="/resources/data/board/" />
+	<resources mapping="/fileUpload/**" location="/resources/data/fileUpload/" />
+	<resources mapping="/pds/**" location="/resources/data/pds/" />
 
 	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
 	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -35,5 +37,8 @@
 		<beans:property name="maxUploadSize" value="20971520" />
 		<beans:property name="defaultEncoding" value="utf-8" />
 	</beans:bean>
+	
+	<!-- Spring Security의 BCryptPasswordEncoder 객체를 Bean으로 등록 -->
+	<beans:bean id="bCryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
 	
 </beans:beans>
