@@ -7,9 +7,24 @@
 	</select>
 	
 	<select id="getPdsList" resultType="com.spring.javaGroupS.vo.PdsVO">
-		select * from pds2 
-		<if test='part != "전체"'> where part = #{part} </if>
+		select *,datediff(fDate, now()) as date_diff,
+		timestampdiff(hour, fDate, now()) as hour_diff
+		from pds2 <if test='part != "전체"'> where part = #{part} </if>
 		order by idx desc limit #{startIndexNo},#{pageSize};
+	</select>
+	
+	<select id="getPdsContent" resultType="com.spring.javaGroupS.vo.PdsVO">
+		select * from pds2 where idx = #{idx};
+	</select>
+	
+	<select id="getReviewList" resultType="com.spring.javaGroupS.vo.ReviewVO">
+		<!-- select * from review where part=#{part} and partIdx=#{idx} order by idx desc; -->
+		select * from (select * from review where part='pds' and partIdx=#{idx}) as v left join 
+         reviewReply r on v.partIdx=#{idx} and v.idx=r.reviewIdx order by v.idx desc, r.replyIdx desc;
+	</select>
+	
+	<select id="getReviewAvg" resultType="double">
+		select ifnull(avg(star), 0) from review where part=#{part} and partIdx=#{idx};
 	</select>
 
 
@@ -17,6 +32,33 @@
 	<insert id="setPdsInput">
 	  insert into pds2 values (default,#{vo.mid},#{vo.nickName},#{vo.fName},#{vo.fSName},#{vo.fSize},#{vo.part},#{vo.title},#{vo.content},#{vo.openSw},#{vo.hostIp},#{vo.pwd},default,default);
 	</insert>
+	
+	<insert id="setReviewInputOk">
+	  insert into review values (default,#{vo.part},#{vo.partIdx},#{vo.mid},#{vo.nickName},#{vo.content},#{vo.star},default);
+	</insert>
+	
+	<insert id="setReviewReplyInputOk">
+	  insert into reviewReply values (default,#{vo.reviewIdx},#{vo.replyMid},#{vo.replyNickName},#{vo.replyContent},default);
+	</insert>
+	
+	
+	
+	<update id="setPdsDownNumCheck">
+	  update pds2 set downNum = downNum + 1 where idx = #{idx};
+	</update>
 
+
+
+	<delete id="setPdsDeleteCheck">
+	  delete from pds2 where idx = #{idx};
+	</delete>
+	
+	<delete id="setReviewDelete">
+	  delete from review where idx = #{idx};
+	</delete>
+	
+	<delete id="setReviewReplyDelete">
+	  delete from reviewReply where replyIdx = #{replyIdx};
+	</delete>
 
 </mapper>

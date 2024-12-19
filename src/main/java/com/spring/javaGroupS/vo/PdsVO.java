@@ -18,4 +18,7 @@ public class PdsVO {
 	private String pwd;
 	private String fDate;
 	private int downNum;
+	
+	private int date_diff;
+	private int hour_diff;
 }

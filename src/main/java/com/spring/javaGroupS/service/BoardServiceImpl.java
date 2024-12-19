@@ -225,7 +225,7 @@ public class BoardServiceImpl implements BoardService {
 		
 		int refCount = boardDAO.getIdxRefSearch(idx);	// 삭제하려는 댓글의 idx를 참조하고 있는 ref가 있는지 검색
 		if(refCount != 0) {		// 자신을 참조하는 ref가 1개라도 있다면 자신은 삭제하지않고 '삭제된글'이라고 업데이트한다.
-			boardDAO.setBoardReplyDeleteCheck(idx);
+			boardDAO.setBoardReplyDeleteCheck(idx);	// 삭제시 참조파일이 존재하기에 update처리해야한다.
 			res = "1";
 		}
 		else {	// 자신을 참조하는 글이 없다라면 자신댓글을 삭제하는데, 이때 자신댓글이 부모댓글이면 바로 삭제하고, 그렇지 않으면 자신의 ref가 가리키는 부모idx가 또 있는지 검색후 있다라면 자신은 바로 삭제한다. 그러나 없을때는 다시 부모idx의 내용이 '-'라면 부모의 댓글도 삭제해야 한다.

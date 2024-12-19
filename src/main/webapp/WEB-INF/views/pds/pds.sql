@@ -41,6 +41,9 @@ create table review(
 desc review;
 select * from review;
 
+select avg(star) from review where part='pds' and partIdx=6;
+
+
 /* 리뷰 댓글 달기 */
 create table reviewReply(
   replyIdx		int not null auto_increment,	/* 댓글의 고유번호 */
@@ -60,3 +63,6 @@ select * from review where part = 'pds' and partIdx = 11 order by idx desc;
 
 select * from (select * from review where part='pds' and partIdx=11) as v left join 
          reviewReply r on v.partIdx=11 and v.idx=r.reviewIdx order by v.idx desc, r.replyIdx desc;
+
+select avg(star) from review where part='pds' and partIdx=6;
+

@@ -383,17 +383,17 @@
 	    <c:forEach var="replyVO" items="${replyVos}" varStatus="st">
         <c:if test="${replyVO.nickName != '-'}">
 		      <tr>
-		        <td class="text-start">:${replyVO.idx}/${replyVO.ref}:
-			          <c:if test="${replyVO.re_step >= 1}">
-			            <c:forEach var="i" begin="1" end="${replyVO.re_step}"> &nbsp;&nbsp;</c:forEach> └▶
-			          </c:if>
-			          ${replyVO.nickName}
-			          <c:if test="${sMid == replyVO.mid || sLevel == 0}">
-			            (<a href="javascript:replyDeleteCheck('${replyVO.idx}','${replyVO.ref}','${replyVO.nickName}')" title="댓글삭제">x</a>
-			            <c:if test="${sMid == replyVO.mid}">
-			              <a href="javascript:replyDeleteUpdateCheck(${replyVO.idx})" title="댓글수정">√</a>
-			            </c:if>)
-			          </c:if>
+		        <td class="text-start">
+		          <c:if test="${replyVO.re_step >= 1}">
+		            <c:forEach var="i" begin="1" end="${replyVO.re_step}"> &nbsp;&nbsp;</c:forEach> └▶
+		          </c:if>
+		          ${replyVO.nickName}
+		          <c:if test="${sMid == replyVO.mid || sLevel == 0}">
+		            (<a href="javascript:replyDeleteCheck('${replyVO.idx}','${replyVO.ref}','${replyVO.nickName}')" title="댓글삭제">x</a>
+		            <c:if test="${sMid == replyVO.mid}">
+		              <a href="javascript:replyDeleteUpdateCheck(${replyVO.idx})" title="댓글수정">√</a>
+		            </c:if>)
+		          </c:if>
 		        </td>
 		        <td class="text-start">${fn:replace(replyVO.content,newLine,"<br/>")}</td>
 		        <td>${fn:substring(replyVO.WDate,0,10)}</td>

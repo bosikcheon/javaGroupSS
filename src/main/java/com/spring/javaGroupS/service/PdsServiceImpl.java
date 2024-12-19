@@ -1,5 +1,6 @@
 package com.spring.javaGroupS.service;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
@@ -16,6 +17,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.spring.javaGroupS.dao.PdsDAO;
 import com.spring.javaGroupS.vo.PdsVO;
+import com.spring.javaGroupS.vo.ReviewVO;
 
 @Service
 public class PdsServiceImpl implements PdsService {
@@ -71,5 +73,60 @@ public class PdsServiceImpl implements PdsService {
 		}
 		fos.flush();
 		fos.close();
+	}
+
+	@Override
+	public int setPdsDownNumCheck(int idx) {
+		return pdsDAO.setPdsDownNumCheck(idx);
+	}
+
+	@Override
+	public int setPdsDeleteCheck(HttpServletRequest request, int idx, String fSName) {
+		String realPath = request.getSession().getServletContext().getRealPath("/resources/data/pds/");
+		String[] fSNames = fSName.split("/");
+		
+		// 서버에 저장된 실제파일을 삭제처리
+		for(int i=0; i<fSNames.length; i++) {
+//			File file = new File(realPath + fSNames[i]);
+//			file.delete();
+			new File(realPath + fSNames[i]).delete();
+		}
+		
+		return pdsDAO.setPdsDeleteCheck(idx);
+	}
+
+	@Override
+	public PdsVO getPdsContent(int idx) {
+		return pdsDAO.getPdsContent(idx);
+	}
+
+	@Override
+	public int setReviewInputOk(ReviewVO vo) {
+		return pdsDAO.setReviewInputOk(vo);
+	}
+
+	@Override
+	public List<ReviewVO> getReviewList(String part, int idx) {
+		return pdsDAO.getReviewList(part, idx);
+	}
+
+	@Override
+	public double getReviewAvg(String part, int idx) {
+		return pdsDAO.getReviewAvg(part, idx);
+	}
+
+	@Override
+	public int setReviewDelete(int idx) {
+		return pdsDAO.setReviewDelete(idx);
+	}
+
+	@Override
+	public int setReviewReplyInputOk(ReviewVO vo) {
+		return pdsDAO.setReviewReplyInputOk(vo);
+	}
+
+	@Override
+	public int setReviewReplyDelete(int replyIdx) {
+		return pdsDAO.setReviewReplyDelete(replyIdx);
 	}
 }

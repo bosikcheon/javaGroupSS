@@ -1,14 +1,18 @@
 package com.spring.javaGroupS.controller;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -62,5 +66,33 @@ public class HomeController {
 		
 		out.flush();
 		fos.close();
+	}
+	
+	// data폴더 아래쪽의 '폴더명/파일명'들을 다운받고자 할대 수행하는 메소드
+	@RequestMapping(value = "/fileDownAction", method = RequestMethod.GET)
+	public void fileDownActionGet(HttpServletRequest request, HttpServletResponse response, String path, String file) throws IOException {
+		if(path.equals("pds")) path += "/temp/";
+		
+		String realPathFile = request.getSession().getServletContext().getRealPath("/resources/data/" + path) + file;
+		
+		File downFile = new File(realPathFile);
+		
+		String downFileName = new String(file.getBytes("UTF-8"), "8859_1");
+		response.setHeader("Content-Disposition", "attachment;filename=" + downFileName);
+		
+		FileInputStream fis = new FileInputStream(downFile);
+		ServletOutputStream sos = response.getOutputStream();
+		
+		byte[] bytes = new byte[2048];
+		int data;
+		while((data = fis.read(bytes, 0, bytes.length)) != -1) {
+			sos.write(bytes, 0, data);
+		}
+		sos.flush();
+		sos.close();
+		fis.close();
+		
+		// 다운로드 완료후에 서버에 저장된 zip파일을 삭제처리한다.
+		downFile.delete();
 	}
 }

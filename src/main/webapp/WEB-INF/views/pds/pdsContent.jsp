@@ -13,7 +13,7 @@
   <style>
     th {
       text-align: center;
-      background-color: #eee;
+      background-color: #eee !important;
     }
     h6{
       position: fixed;
@@ -95,13 +95,7 @@
     	if(star == "") {
     		alert("별점을 부여해 주세요");
     	}
-    	/*
-    	else if(review.trim() == "") {
-    		alert("리뷰를 입력해 주세요");
-    		reviewForm.review.focus();
-    	}
-    	*/
-    	//alert("별점 : " + star);
+    	
     	let query = {
     			part : 'pds',
     			partIdx: ${vo.idx},
@@ -113,11 +107,12 @@
     	
     	$.ajax({
     		type : "post",
-    		url  : "ReviewInputOk.ad",
+    		url  : "reviewInputOk",
     		data : query,
     		success:function(res) {
-    			alert(res);
-    			location.reload();
+    			if(res != "0") alert("리뷰가 등록되었습니다.");
+    			else alert("리뷰 등록 실패~~");
+  				location.reload();
     		},
     		error : function() {
     			alert('전송오류!!');
@@ -131,7 +126,7 @@
     	if(!ans) return false;
     	
     	$.ajax({
-    		url  : "ReviewDelete.ad",
+    		url  : "reviewDelete",
     		type : "post",
     		data : {idx : idx},
     		success:function(res) {
@@ -142,7 +137,7 @@
     			else alert("리뷰 삭제 실패~~\n하위 댓글이 존재합니다.");
     		},
     		error : function() {
-    			alert("전송오류!");
+    			alert("하위 댓글이 존재합니다. 확인하세요.");
     		}
     	});
     }
@@ -173,7 +168,7 @@
     	}
     	
     	$.ajax({
-    		url  : "ReviewReplyInputOk.ad",
+    		url  : "reviewReplyInputOk",
     		type : "post",
     		data : query,
     		success:function(res) {
@@ -196,7 +191,7 @@
     	
     	$.ajax({
     		type : "post",
-    		url  : "ReviewReplyDelete.ad",
+    		url  : "reviewReplyDelete",
     		data : {replyIdx : replyIdx},
     		success:function(res) {
     			if(res != "0") {
@@ -224,18 +219,18 @@
       <th>올린이</th>
       <td>${vo.nickName}</td>
       <th>올린날짜</th>
-      <td>${vo.fDate}</td>
+      <td>${vo.FDate}</td>
     </tr>
     <tr>
       <th>파일명</th>
       <td>
-				<c:set var="fNames" value="${fn:split(vo.fName,'/')}"/>
-        <c:set var="fSNames" value="${fn:split(vo.fSName,'/')}"/>
+				<c:set var="fNames" value="${fn:split(vo.FName,'/')}"/>
+        <c:set var="fSNames" value="${fn:split(vo.FSName,'/')}"/>
         <c:forEach var="fName" items="${fNames}" varStatus="st">
-          <c:if test="${sLevel != 1}"><a href="${ctp}/images/pds/${fSNames[st.index]}" download="${fName}" onclick="downNumCheck(${vo.idx})">${fName}</a><br/></c:if>
+          <c:if test="${sLevel != 1}"><a href="${ctp}/pds/${fSNames[st.index]}" download="${fName}" onclick="downNumCheck(${vo.idx})" class="text-decoration-none text-dark link-primary">${fName}</a><br/></c:if>
           <c:if test="${sLevel == 1}">${fName}<br/></c:if>
         </c:forEach>          
-        (<fmt:formatNumber value="${vo.fSize/1024}" pattern="#,##0" />KByte)
+        (<fmt:formatNumber value="${vo.FSize/1024}" pattern="#,##0" />KByte)
       </td>
       <th>다운횟수</th>
       <td>${vo.downNum}</td>
@@ -248,13 +243,13 @@
     </tr>
     <tr>
       <th>상세내역</th>
-      <td colspan="3" class="text-left">
+      <td colspan="3" class="text-start">
       	${fn:replace(vo.content,newLine,"<br/>")}
       </td>
     </tr>
   </table>
   <br/>
-  <div class="text-center"><a href="PdsList.pds" class="btn btn-info text-center">돌아가기</a></div>
+  <div class="text-center"><a href="pdsList?part=${pageVO.part}&pag=${pageVO.pag}&pageSize=${pageVO.pageSize}" class="btn btn-info text-center">돌아가기</a></div>
   <hr/>
   
   <!-- 리뷰 작성하기/리스트보기 시작 -->
@@ -274,7 +269,7 @@
         <textarea rows="3" name="review" id="review" class="form-control mb-1" placeholder="별점후기를 남겨주시면 100포인트를 지급합니다."></textarea>
       </div>
       <div>
-        <input type="button" value="별점/리뷰등록" onclick="reviewCheck()" class="btn-primary form-control"/>
+        <input type="button" value="별점/리뷰등록" onclick="reviewCheck()" class="btn btn-primary form-control"/>
       </div>
     </form>
   </div>
@@ -284,7 +279,7 @@
       <input type="button" value="리뷰보이기" id="reviewShowBtn" onclick="reviewShow()" class="btn btn-success">
       <input type="button" value="리뷰가리기" id="reviewHideBtn" onclick="reviewHide()" class="btn btn-warning">
     </div>
-    <div class="col text-right mr-1">
+    <div class="col text-end me-1">
       <b>리뷰평점 : <fmt:formatNumber value="${reviewAvg}" pattern="#,##0.0" /></b>
     </div>
   </div>
@@ -296,10 +291,10 @@
 	        <div class="col ml-2">
 	          <b>${vo.nickName}</b>
 	          <span style="font-size:11px">${fn:substring(vo.reviewDate, 0, 10)}</span>
-	          <c:if test="${vo.mid == sMid || sLevel == 0}"><a href="javascript:reviewDelete(${vo.idx})" title="리뷰삭제" class="badge badge-danger" style="font-size:10px">x</a></c:if>
-	          <c:if test="${vo.mid != sMid}"><a href="#" onclick="reviewReply('${vo.idx}','${vo.nickName}','${fn:replace(vo.content,newLine,'<br>')}')" title="댓글달기" data-toggle="modal" data-target="#myModal" class="badge badge-secondary" style="font-size:10px">▤</a></c:if>
+	          <c:if test="${vo.mid == sMid || sLevel == 0}"><a href="javascript:reviewDelete(${vo.idx})" title="리뷰삭제" class="badge bg-danger text-decoration-none" style="font-size:10px">x</a></c:if>
+	          <c:if test="${vo.mid != sMid}"><a href="#" onclick="reviewReply('${vo.idx}','${vo.nickName}','${fn:replace(vo.content,newLine,'<br>')}')" title="댓글달기" data-bs-toggle="modal" data-bs-target="#myModal" class="badge bg-secondary" style="font-size:10px">▤</a></c:if>
 	        </div>
-	        <div class="col text-right mr-2">
+	        <div class="col text-end me-2">
 	          <c:forEach var="i" begin="1" end="${vo.star}" varStatus="iSt"><font color="gold">★</font></c:forEach>
 	          <c:forEach var="i" begin="1" end="${5 - vo.star}" varStatus="iSt">☆</c:forEach>
 	        </div>
@@ -315,7 +310,7 @@
           <div class="mt-2 ml-3">└▶ </div>
           <div class="mt-2 ml-2">${vo.replyNickName}
             <span style="font-size:11px">${fn:substring(vo.replyDate,0,10)}</span>
-            <c:if test="${vo.replyMid == sMid || sLevel == 0}"><a href="javascript:reviewReplyDelete(${vo.replyIdx})" title="댓글삭제" class="badge badge-danger">x</a></c:if>
+            <c:if test="${vo.replyMid == sMid || sLevel == 0}"><a href="javascript:reviewReplyDelete(${vo.replyIdx})" title="댓글삭제" class="badge bg-warning text-decoration-none m-0 p-1">x</a></c:if>
             <br/>${fn:replace(vo.replyContent,newLine,"<br/>")}
           </div>
         </div>
@@ -333,7 +328,7 @@
     	<c:set var="ext" value="${fn:substring(fSName, len-3, len)}" />
     	<c:set var="extLower" value="${fn:toLowerCase(ext)}" />
     	<c:if test="${extLower == 'jpg' || extLower == 'gif' || extLower == 'png'}">
-    	  <img src="${ctp}/images/pds/${fSName}" width="90%" />
+    	  <img src="${ctp}/pds/${fSName}" width="90%" />
     	</c:if>
     	<hr/>
     </c:forEach>
@@ -350,7 +345,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h4 class="modal-title">>> 리뷰에 댓글달기</h4>
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
         <form name="reviewReplyForm" id="reviewReplyForm" class="was-vilidated">
@@ -372,7 +367,7 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
