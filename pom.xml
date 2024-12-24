@@ -127,6 +127,15 @@
 			<scope>provided</scope>
 		</dependency>
 		
+		<!-- Backend체크를 위할 validator 라이브러리 주입 -->
+		<!-- https://mvnrepository.com/artifact/org.hibernate.validator/hibernate-validator -->
+		<dependency>
+	    <groupId>org.hibernate.validator</groupId>
+	    <artifactId>hibernate-validator</artifactId>
+	    <version>6.2.0.Final</version>
+		</dependency>
+		
+		
 		<!-- AOP 라이브러리 -->
 		<!-- https://mvnrepository.com/artifact/org.aspectj/aspectjweaver -->
 		<dependency>
@@ -245,6 +254,15 @@
 	    <artifactId>commons-fileupload</artifactId>
 	    <version>1.5</version>
 		</dependency>
+		
+		<!-- 트랜잭션에 필요한 라이브러리 주입 -->
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring-tx -->
+		<dependency>
+	    <groupId>org.springframework</groupId>
+	    <artifactId>spring-tx</artifactId>
+	    <version>${org.springframework-version}</version>
+		</dependency>
+		
 		
 
 		

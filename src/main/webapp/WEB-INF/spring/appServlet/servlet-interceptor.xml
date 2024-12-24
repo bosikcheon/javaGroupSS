@@ -33,6 +33,7 @@
 				<beans:ref bean="level3Interceptor" />
 			</interceptor>
 			<interceptor>		<!-- 정회원 -->
+				<mapping path="/webMessage/**"/>
 				<mapping path="/board/**"/>
 				<mapping path="/study/**"/>
 				<mapping path="/user/**"/>

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.spring.javaGroupS.dao.BoardDAO;
 import com.spring.javaGroupS.dao.PdsDAO;
+import com.spring.javaGroupS.dao.WebMessageDAO;
 
 @Service
 public class PageProcess {
@@ -15,6 +16,9 @@ public class PageProcess {
 	@Autowired
 	PdsDAO pdsDAO;
 
+	@Autowired
+	WebMessageDAO webMessageDAO;
+	
 	public PageVO totRecCnt(int pag, int pageSize, String section, String part, String searchString) {
 		PageVO pageVO = new PageVO();
 		
@@ -36,6 +40,11 @@ public class PageProcess {
 		}
 		else if(section.equals("pds")) {
 			totRecCnt = pdsDAO.getTotRecCnt(part);
+		}
+		else if(section.equals("webMessage")) {
+			String mid = part;
+			int mSw = Integer.parseInt(searchString);
+			totRecCnt = webMessageDAO.totRecCnt(mid, mSw);
 		}
 		
 		int totPage = (totRecCnt % pageSize)==0 ? (totRecCnt / pageSize) : (totRecCnt / pageSize) + 1;

@@ -10,12 +10,16 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.spring.javaGroupS.dao.StudyDAO;
+import com.spring.javaGroupS.vo.TransactionVO;
+import com.spring.javaGroupS.vo.User2VO;
+import com.spring.javaGroupS.vo.UserVO;
 
 @Service
 public class StudyServiceImpl implements StudyService {
@@ -201,6 +205,39 @@ public class StudyServiceImpl implements StudyService {
 			e.printStackTrace();
 		}
 		return res;
+	}
+
+	@Override
+	public void setTransactionUserInput(UserVO vo) {
+		studyDAO.setTransactionUserInput(vo);
+	}
+
+	@Override
+	public void setTransactionUser2Input(UserVO vo) {
+		studyDAO.setTransactionUser2Input(vo);
+	}
+
+	@Transactional
+	@Override
+	public void setTransactionUserInput2(UserVO vo) {
+		studyDAO.setTransactionUserInput(vo);
+		studyDAO.setTransactionUser2Input(vo);
+	}
+
+	@Transactional
+	@Override
+	public void setTransactionUserInput3(UserVO vo) {
+		studyDAO.setTransactionUserInput3(vo);
+	}
+
+	@Override
+	public int setValidatorInput(TransactionVO vo) {
+		return studyDAO.setValidatorInput(vo);
+	}
+
+	@Override
+	public void setTransactionUserInput4(User2VO vo) {
+		studyDAO.setTransactionUserInput4(vo);
 	}
 	
 	

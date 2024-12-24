@@ -16,4 +16,6 @@ public class UserVO {
 	private String address;
 
 	private String nickName;
+	private String job;
+	
 }

@@ -16,7 +16,11 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -26,8 +30,11 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import com.spring.javaGroupS.service.DbtestService;
 import com.spring.javaGroupS.service.MemberService;
 import com.spring.javaGroupS.service.StudyService;
+import com.spring.javaGroupS.service.UserService;
 import com.spring.javaGroupS.vo.MailVO;
 import com.spring.javaGroupS.vo.MemberVO;
+import com.spring.javaGroupS.vo.TransactionVO;
+import com.spring.javaGroupS.vo.User2VO;
 import com.spring.javaGroupS.vo.UserVO;
 
 //@RestController
@@ -46,6 +53,9 @@ public class StudyController {
 	
 	@Autowired
 	MemberService memberService;
+	
+	@Autowired
+	UserService userService;
 	
 	@RequestMapping(value="/ajax/ajaxForm", method = RequestMethod.GET)
 	public String ajaxFormGet() {
@@ -135,6 +145,93 @@ public class StudyController {
 		str += "주소 : " + vo.getAddress() + "<br>";
 		return str;
 	}
+	
+	// 트랜잭션 폼 보기
+	@RequestMapping(value = "/transaction/transactionForm", method = RequestMethod.GET)
+	public String transactionFormGet(Model model) {
+		List<UserVO> vos = userService.getUserList();
+		List<UserVO> vos2 = userService.getUser2List();
+		model.addAttribute("vos", vos);
+		model.addAttribute("vos2", vos2);
+		return "study/transaction/transactionForm";
+	}
+	
+	// 트랜잭션 user,user2테이블 자료 등록
+	@Transactional
+	@RequestMapping(value = "/transaction/transactionInput", method = RequestMethod.POST)
+	public String transactionInputPost(UserVO vo) {
+		studyService.setTransactionUserInput(vo);
+		studyService.setTransactionUser2Input(vo);
+		
+		return "redirect:/study/transaction/transactionForm";
+	}
+	
+	@RequestMapping(value = "/transaction/transactionInput2", method = RequestMethod.POST)
+	public String transactionInput2Post(UserVO vo) {
+		studyService.setTransactionUserInput2(vo);
+		return "redirect:/study/transaction/transactionForm";
+	}
+	
+	@RequestMapping(value = "/transaction/transactionInput3", method = RequestMethod.POST)
+	public String transactionInput3Post(UserVO vo) {
+		studyService.setTransactionUserInput3(vo);
+		return "redirect:/study/transaction/transactionForm";
+	}
+	
+	// validate처리하면서 트랜잭션도 처리하기(트랜잭션은 서비스에서 처리했다.)
+	@RequestMapping(value = "/transaction/transactionInput4", method = RequestMethod.POST)
+	public String transactionInput4Post(Model model, @Validated User2VO vo, BindingResult bindingResult) {
+		if(bindingResult.hasFieldErrors()) {
+			List<ObjectError> list = bindingResult.getAllErrors();
+			
+			String temp = "";
+			for(ObjectError e : list) {
+				System.out.println("메세지1 : " + e);
+				System.out.println("메세지2 : " + e.getDefaultMessage());
+				temp = e.getDefaultMessage() + "";
+				break;
+			}
+			model.addAttribute("mid", temp);
+			return "redirect:/message/transactionError";
+		}
+		
+		studyService.setTransactionUserInput4(vo);
+		return "redirect:/message/transactionOk";
+	}
+	
+	// Backend체크(validator 폼 보기)
+	@RequestMapping(value = "/validator/validatorForm", method = RequestMethod.GET)
+	public String validatorFormGet(Model model) {
+		List<UserVO> vos = userService.getUserList();
+		model.addAttribute("vos", vos);
+		return "study/validator/validatorForm";
+	}
+	
+	// Backend체크(validator 처리 - vo에서 관련 자료에 대한 어노테이션 체크가 선행되어 있어야 한다.)
+	@ResponseBody
+	@RequestMapping(value = "/validator/validatorInput", method = RequestMethod.POST, produces = "application/text; charset=utf-8")
+	public String validatorFormPost(@Validated TransactionVO vo, BindingResult bindingResult) {
+//		if(bindingResult.hasFieldErrors()) {
+//			System.out.println("에러 발생...");
+//			System.out.println("bindingResult :" + bindingResult);
+//			return "0";
+//		}
+		
+		if(bindingResult.hasFieldErrors()) {
+			List<ObjectError> list = bindingResult.getAllErrors();
+			
+			String[] temp = null;
+			for(ObjectError e : list) {
+				temp = e.getDefaultMessage().split("/");
+				System.out.println("메세지 : " + temp[0] + " , 코드 : " + temp[1]);
+				break;
+			}
+			return temp[0];
+		}
+		
+		return studyService.setValidatorInput(vo) + "";
+	}
+	
 	
 	// 메일 폼 보기(주소록을 함께 넘겨주고 있다)
 	@RequestMapping(value = "/mail/mailForm", method = RequestMethod.GET)

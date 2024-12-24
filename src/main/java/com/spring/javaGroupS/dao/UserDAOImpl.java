@@ -60,5 +60,11 @@ public class UserDAOImpl implements UserDAO {
 		return vos;
 	}
 
+	@Override
+	public List<UserVO> getUser2List() {
+		List<UserVO> vos = sqlSession.selectList("userNS.getUser2List");
+		return vos;
+	}
+
 
 }

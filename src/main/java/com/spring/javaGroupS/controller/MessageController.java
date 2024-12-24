@@ -16,7 +16,8 @@ public class MessageController {
 			@RequestParam(name="mid", defaultValue = "", required = false) String mid,
 			@RequestParam(name="idx", defaultValue = "0", required = false) int idx,
 			@RequestParam(name="pag", defaultValue = "1", required = false) int pag,
-			@RequestParam(name="pageSize", defaultValue = "10", required = false) int pageSize
+			@RequestParam(name="pageSize", defaultValue = "10", required = false) int pageSize,
+			@RequestParam(name="mSw", defaultValue = "1", required = false) int mSw
 		) {
 		
 		if(msgFlag.equals("memberLoginNo")) {
@@ -222,6 +223,46 @@ public class MessageController {
 		else if(msgFlag.equals("pdsInputNo")) {
 			model.addAttribute("message", "자료실 업로드 실패~~");
 			model.addAttribute("url", "pds/pdsInput");
+		}
+		else if(msgFlag.equals("transactionError")) {
+			model.addAttribute("message", mid);
+			model.addAttribute("url", "study/transaction/transactionForm");
+		}
+		else if(msgFlag.equals("transactionOk")) {
+			model.addAttribute("message", "회원 가입완료(유효성검사/트랜잭션처리)");
+			model.addAttribute("url", "study/transaction/transactionForm");
+		}
+		else if(msgFlag.equals("wmMemberIdNo")) {
+			model.addAttribute("message", "아이디를 확인하세요.");
+			model.addAttribute("url", "webMessage/webMessage?mSw=0");
+		}
+		else if(msgFlag.equals("wmMemberInputOk")) {
+			model.addAttribute("message", "메세지를 보냈습니다.");
+			model.addAttribute("url", "webMessage/webMessage?mSw=1");
+		}
+		else if(msgFlag.equals("wmMemberInputNo")) {
+			model.addAttribute("message", "메세지 전송 실패~~");
+			model.addAttribute("url", "webMessage/webMessage?mSw=0");
+		}
+		else if(msgFlag.equals("wmMessageDeleteOk")) {
+			model.addAttribute("message", "휴지통으로 이동 되었습니다.");
+			model.addAttribute("url", "webMessage/webMessage?mSw="+mSw);
+		}
+		else if(msgFlag.equals("wmMessageDeleteNo")) {
+			model.addAttribute("message", "휴지통 이동 실패~~");
+			model.addAttribute("url", "webMessage/webMessage?mSw="+mSw);
+		}
+		else if(msgFlag.equals("wmMessageResetOk")) {
+			model.addAttribute("message", "메세지를 삭제하였습니다.");
+			model.addAttribute("url", "webMessage/webMessage?mSw=1");
+		}
+		else if(msgFlag.equals("wmMessageResetNo")) {
+			model.addAttribute("message", "메세지 삭제 실패~~");
+			model.addAttribute("url", "webMessage/webMessage?mSw=5");
+		}
+		else if(msgFlag.equals("wmMessageEmpty")) {
+			model.addAttribute("message", "휴지통이 비어 있습니다.");
+			model.addAttribute("url", "webMessage/webMessage?mSw=5");
 		}
 		
 		

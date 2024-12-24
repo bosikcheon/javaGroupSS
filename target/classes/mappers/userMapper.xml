@@ -7,6 +7,10 @@
 		select * from user order by idx desc;
 	</select>
 	
+	<select id="getUser2List" resultType="userVO">
+		select * from user2;
+	</select>
+	
 	<!-- <select id="getUserIdxSearch" resultType="com.spring.javaGroupS.vo.UserVO"> -->
 	<select id="getUserIdxSearch" resultType="userVO">
 		select * from user where idx = #{idx};

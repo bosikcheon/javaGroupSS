@@ -44,6 +44,9 @@
 	        <a href="${ctp}/study/mail/mailForm" class="w3-bar-item w3-button">메일보내기</a>
 	        <a href="${ctp}/study/random/randomAlphaNumeric" class="w3-bar-item w3-button">랜덤알파뉴메릭</a>
 	        <a href="${ctp}/study/fileUpload/fileUpload" class="w3-bar-item w3-button">파일업로드연습</a>
+	        <a href="${ctp}/study/transaction/transactionForm" class="w3-bar-item w3-button">트랜잭션연습</a>
+	        <a href="${ctp}/study/validator/validatorForm" class="w3-bar-item w3-button">Backend체크</a>
+	        <a href="${ctp}/errorPage/errorMain" class="w3-bar-item w3-button">에러페이지연습</a>
 	      </div>
 	    </div>
 	    <div class="w3-dropdown-hover w3-hide-small">
@@ -57,6 +60,7 @@
 	    <div class="w3-dropdown-hover w3-hide-small">
 	      <button class="w3-padding-large w3-button" title="More" onclick="location.href='${ctp}/member/memberMain';">MyPage <i class="fa fa-caret-down"></i></button>     
 	      <div class="w3-dropdown-content w3-bar-block w3-card-4">
+	        <a href="${ctp}/webMessage/webMessage" class="w3-bar-item w3-button">웹메세지</a>
 	        <a href="${ctp}/member/memberList" class="w3-bar-item w3-button">회원리스트</a>
 	        <a href="${ctp}/member/memberPwdCheck/p" class="w3-bar-item w3-button">비밀번호변경</a>
 	        <a href="${ctp}/member/memberPwdCheck/i" class="w3-bar-item w3-button">회원정보수정</a>

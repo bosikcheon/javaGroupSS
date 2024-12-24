@@ -19,10 +19,10 @@
   <hr/>
   <div>현재 <font color="blue"><b>${sNickName}(<font color="red">${strLevel}</font>)</b></font>님 로그인 중입니다.</div>
   <hr/>
-  <c:if test="${sLevel == 1}">
+  <c:if test="${sLevel == 3}">
   	<div><font color="red">정회원 등업조건 : <u>총 방문횟수 <b>10회</b>이상</u>, <u>방명록에 글쓰기 <b>2회</b> 이상</u></font></div>
+	  <hr/>
   </c:if>
-  <hr/>
   <div>총 방문횟수 : <font color="blue"><b>${mVo.visitCnt}</b></font></div>
   <div>오늘 방문횟수 : <font color="blue"><b>${mVo.todayCnt}</b></font></div>
   <div>최종 방문일 : <font color="blue"><b>${fn:substring(mVo.lastDate,0,19)}</b></font></div>
@@ -30,7 +30,7 @@
   <hr/>
   <div>방명록에 작성한글 수 : <font color="blue">총 <a href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#myModal"><b>${fn:length(guestVos)}</b></a> 건</font></div>
   <hr/>
-  <div>회원 사진 : <img src="${ctp}/member/${mVo.photo}" width="300px" /></div>
+  <div>회원 사진 : <img src="${ctp}/member/${mVo.photo}" width="250px" /></div>
 </div>
 
 <!-- The Modal -->

@@ -25,4 +25,6 @@ public interface UserDAO {
 
 	List<UserVO> getUserSearchList(String mid);
 
+	List<UserVO> getUser2List();
+
 }

@@ -2,4 +2,29 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.spring.javaGroupS.dao.StudyDAO">
 	
+	
+	
+	
+	<insert id="setTransactionUserInput">
+	  insert into user values (default, #{vo.mid}, #{vo.pwd}, #{vo.name}, #{vo.age}, #{vo.gender}, #{vo.address});
+	</insert>
+	
+	<insert id="setTransactionUser2Input">
+	  insert into user2 values (#{vo.mid}, #{vo.job});
+	</insert>
+	
+	<insert id="setTransactionUserInput3">
+	  insert into user values (default, #{vo.mid}, #{vo.pwd}, #{vo.name}, #{vo.age}, #{vo.gender}, #{vo.address});
+	  insert into user2 values (#{vo.mid}, #{vo.job});
+	</insert>
+	
+	<insert id="setTransactionUserInput4">
+	  insert into user values (default, #{vo.mid}, #{vo.pwd}, #{vo.name}, #{vo.age}, #{vo.gender}, #{vo.address});
+	  insert into user2 values (#{vo.mid}, #{vo.job});
+	</insert>
+	
+	<insert id="setValidatorInput">
+	  insert into user values (default, #{vo.mid}, #{vo.pwd}, #{vo.name}, #{vo.age}, #{vo.gender}, #{vo.address});
+	</insert>
+	
 </mapper>

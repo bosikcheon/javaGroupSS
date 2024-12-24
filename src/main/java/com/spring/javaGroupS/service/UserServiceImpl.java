@@ -54,5 +54,10 @@ public class UserServiceImpl implements UserService {
 		return userDAO.getUserSearchList(mid);
 	}
 
+	@Override
+	public List<UserVO> getUser2List() {
+		return userDAO.getUser2List();
+	}
+
 
 }
