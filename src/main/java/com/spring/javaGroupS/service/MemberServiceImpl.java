@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.spring.javaGroupS.dao.MemberDAO;
 import com.spring.javaGroupS.vo.MemberVO;
@@ -88,6 +89,23 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public MemberVO getMemberIdDuplicationCheck(String mid) {
 		return memberDAO.getMemberIdDuplicationCheck(mid);
+	}
+
+	@Override
+	public MemberVO getMemberNickNameEmailCheck(String nickName, String email) {
+		return memberDAO.getMemberNickNameEmailCheck(nickName, email);
+	}
+
+	@Override
+	public void setKakaoMemberInput(String mid, String nickName, String email, String pwd) {
+		memberDAO.setKakaoMemberInput(mid, nickName, email, pwd);
+	}
+
+	@Override
+	public String getFileUpload(MultipartFile fName, String mid) {
+		String oFileName = fName.getOriginalFilename();
+		
+		return null;
 	}
 
 }

@@ -3,6 +3,8 @@ package com.spring.javaGroupS.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.spring.javaGroupS.vo.MemberVO;
 
 public interface MemberService {
@@ -36,5 +38,11 @@ public interface MemberService {
 	int getLevelCnt(int level);
 
 	MemberVO getMemberIdDuplicationCheck(String mid);
+
+	MemberVO getMemberNickNameEmailCheck(String nickName, String email);
+
+	void setKakaoMemberInput(String mid, String nickName, String email, String pwd);
+
+	String getFileUpload(MultipartFile fName, String mid);
 
 }

@@ -18,6 +18,7 @@
 				<mapping path="/member/**"/>
 				<mapping path="/board/boardList"/>
 				<exclude-mapping path="/member/memberLogin"/>
+				<exclude-mapping path="/member/kakaoLogin"/>
 				<exclude-mapping path="/member/memberIdCheck"/>
 				<exclude-mapping path="/member/memberIdDuplicationCheck"/>
 				<exclude-mapping path="/member/memberNickNameCheck"/>

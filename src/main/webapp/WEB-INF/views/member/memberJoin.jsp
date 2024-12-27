@@ -91,6 +91,23 @@
     		document.getElementById("nickNameBtn").focus();
     		return false;
     	}
+		  
+		  // 전송전 파일에 관련된 사항체크
+		  let fName = document.getElementById("photo").value;
+		  if(fName.trim() != "") {
+			  let ext = fName.substring(fName.lastIndexOf(".")+1).toLowerCase();
+			  let maxSize = 1024 * 1024 * 5;
+			  let fileSize = document.getElementById("photo").files[0].size;
+			  
+			  if(ext != 'jpg' && ext != 'gif' && ext != 'png' && ext != 'jpeg') {
+				  alert("그림파일만 업로드 가능합니다.");
+				  return false;
+			  }
+			  if(fileSize > maxSize) {
+				  alert("업로드할 파일의 최대용량은 5MByte 입니다.");
+				  return false;
+			  }
+		  }
     	
     	myform.mid.disabled = false;
     	myform.nickName.disabled = false;
@@ -220,6 +237,17 @@
     		}
     	});
     }
+    
+    // 사진 미리보기
+    function imgCheck(e) {
+    	if(e.files && e.files[0]) {
+    		let reader = new FileReader();
+    		reader.onload = function(e) {
+    			document.getElementById("photoDemo").src = e.target.result;
+    		}
+    		reader.readAsDataURL(e.giles[0]);
+    	}
+    }
   </script>
 </head>
 <body>
@@ -227,7 +255,7 @@
 <jsp:include page="/WEB-INF/views/include/slide2.jsp" />
 <p><br/></p>
 <div class="container">
-  <form name="myform" method="post" onsubmit="return fCheck()">
+  <form name="myform" method="post" onsubmit="return fCheck()" enctype="multipart/form-data">
     <h3 class="text-center">회 원 가 입</h3>
     <table class="table table-bordered" id="userTable">
       <tr>
@@ -328,7 +356,10 @@
 	      <tr class="mb-2">
 	        <th class="text-center"><label for="photo" class="form-label">사진</label></th>
 	        <!-- <td><input type="file" name="photo" id="photo" class="form-control-file border" /></td> -->
-	        <td><input type="file" name="photo" id="photo" class="form-control" /></td>
+	        <td>
+	          <input type="file" name="fName" id="photo" onchange="imgCheck(this)" class="form-control" />
+	          <div><img id="photoDemo" width="100px"/></div>
+	        </td>
 	      </tr>
 	      <tr class="mb-2">
 	        <th class="text-center"><label for="userInfor" class="form-label">정보공개</label></th>

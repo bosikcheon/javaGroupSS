@@ -2,6 +2,17 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.spring.javaGroupS.dao.StudyDAO">
 	
+	<select id="getKakaoAddressSearch" resultType="com.spring.javaGroupS.vo.KakaoAddressVO">
+		select * from kakaoAddress where address = #{address};
+	</select>
+	
+	<select id="getKakaoAddressList" resultType="com.spring.javaGroupS.vo.KakaoAddressVO">
+		select * from kakaoAddress order by address;
+	</select>
+	
+	<select id="getMemberVisitCount" resultType="com.spring.javaGroupS.vo.ChartVO">
+		select substring(visitDate, 1, 10) as visitDate, visitCount from visit order by visitDate desc limit 7;
+	</select>
 	
 	
 	
@@ -26,5 +37,15 @@
 	<insert id="setValidatorInput">
 	  insert into user values (default, #{vo.mid}, #{vo.pwd}, #{vo.name}, #{vo.age}, #{vo.gender}, #{vo.address});
 	</insert>
+	
+	<insert id="setKakaoAddressInput">
+	  insert into kakaoAddress values (#{vo.address}, #{vo.latitude}, #{vo.longitude});
+	</insert>
+	
+	
+	
+	<delete id="setKakaoAddressDelete">
+	  delete from kakaoAddress where address = #{address};
+	</delete>
 	
 </mapper>

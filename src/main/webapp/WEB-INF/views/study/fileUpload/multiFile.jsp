@@ -14,7 +14,7 @@
     
     // 멀티파일 업로드처리
     function fCheck() {
-    	let fName = document.getElementById("@RequestParam(name="part", defaultValue = "전체", required = false) String part,").value;
+    	let fName = document.getElementById("fName").value;
     	let fileSize = 0;
     	let maxSize = 1024 * 1024 * 30; 	// 저장파일 최대용량을 20MByte까지로 제한
     	let ext = "";

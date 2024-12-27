@@ -263,7 +263,21 @@
 	    <version>${org.springframework-version}</version>
 		</dependency>
 		
+		<!-- 썸네일 이미지처리 라이브러리(thumbnailator) -->
+		<!-- https://mvnrepository.com/artifact/net.coobird/thumbnailator -->
+		<dependency>
+	    <groupId>net.coobird</groupId>
+	    <artifactId>thumbnailator</artifactId>
+	    <version>0.4.20</version>
+		</dependency>
 		
+		<!-- 이미지크기로 설정하기(imgscalr lib) -->
+		<!-- https://mvnrepository.com/artifact/org.imgscalr/imgscalr-lib -->
+		<dependency>
+	    <groupId>org.imgscalr</groupId>
+	    <artifactId>imgscalr-lib</artifactId>
+	    <version>4.2</version>
+		</dependency>
 
 		
 		

@@ -58,10 +58,18 @@
 		select count(*) from member where level = #{level};
 	</select>
 	
+	<select id="getMemberNickNameEmailCheck" resultType="com.spring.javaGroupS.vo.MemberVO">
+		select * from member where nickName=#{nickName} and email = #{email} limit 1;
+	</select>
+	
 	
 	
 	<insert id="setMemberJoinOk">
 	  insert into member values (default,#{vo.mid},#{vo.pwd},#{vo.nickName},#{vo.name},#{vo.gender},#{vo.birthday},#{vo.tel},#{vo.address},#{vo.email},#{vo.content},#{vo.photo},#{vo.userInfor},default,default,default,default,default,default,default);
+	</insert>
+	
+	<insert id="setKakaoMemberInput">
+	  insert into member (mid, nickName, name, email, pwd, level) values (#{mid},#{nickName},#{nickName},#{email},#{pwd},2);
 	</insert>
 	
 	

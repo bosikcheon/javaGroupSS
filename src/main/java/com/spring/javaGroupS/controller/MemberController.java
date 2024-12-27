@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.spring.javaGroupS.common.SecurityUtil;
 import com.spring.javaGroupS.service.GuestService;
@@ -88,6 +89,7 @@ public class MemberController {
 				session.setAttribute("sNickName", vo.getNickName());
 				session.setAttribute("sLevel", vo.getLevel());
 				session.setAttribute("strLevel", strLevel);
+				session.setAttribute("sLogin", "일반로그인");
 				
 				// 로그인창의 아이디 체크 유무에 대한 처리(쿠키 저장/삭제)
 				if(idSave.equals("on")) {
@@ -126,6 +128,73 @@ public class MemberController {
 			}
 		}
 		return "redirect:/message/memberLoginNo";
+	}
+	
+	// 일반 카카오 로그인 인증처리
+	@RequestMapping(value = "/kakaoLogin", method = RequestMethod.GET)
+	public String kakaoLoginGet(HttpSession session, HttpServletRequest request,
+			String nickName, String email, String accessToken
+		) throws MessagingException {
+		//session.setAttribute("sAccessToken", accessToken);
+		session.setAttribute("sLogin", "kakao");
+		
+		// 카카오회원이 우리 회원인지 조사?
+		MemberVO vo = memberService.getMemberNickNameEmailCheck(nickName, email);
+		
+		// 카카오회원이 우리회원이 아니라면 자동으로 우리회원에 가입처리한다.
+		// 필수입력:아이디, 닉네임, 이메일, 성명(닉네임으로 대체), 비밀번호(임시비밀번호 발급처리), 레벨:정회원(2)
+		String newMember = "NO";	// 신규회원은 OK, 기존회원은 NO
+		if(vo == null) { 
+			// 신규회원인지에 대한 체크하기....
+			String mid = email.substring(0, email.indexOf("@"));
+			MemberVO vo2 = memberService.getMemberIdCheck(mid);
+			if(vo2 != null) return "redirect:/message/memberIdSameCheck";
+		
+			// 임시 비밀번호 발급처리
+			String pwd = UUID.randomUUID().toString().substring(0, 8);
+			session.setAttribute("sImsiPwd", pwd);
+			
+			// 새로 발급된 비밀번호를 암호화 시켜서 DB에 저장처리한다. 이때 카카오로그인한 회원은 바로 정회원으로 등업처리한다.
+			SecurityUtil security = new SecurityUtil();
+			String imsiPwd = security.encryptSHA256("123" + pwd);
+			memberService.setKakaoMemberInput(mid, nickName, email, "123"+imsiPwd);
+			
+			// 새로 발급받은 임시비밀번호를 메일로 전송처리.
+			mailSend(email, "임시비밀번호를 발송하였습니다.", "임시비밀번호 : "+pwd, request);
+			
+			vo = memberService.getMemberIdCheck(mid);
+			
+			// 신규회원은 비밀번호를 새로발급하였기에, memberMain창에서 '개인정보/비밀번호'를 변경하라는 메세지를 지속적으로 뿌리기 위함.
+			session.setAttribute("sLoginNew", "OK");
+			newMember = "OK";
+		}
+		
+		// 로그인 인증완료시 세션처리
+		String strLevel = "";
+		if(vo.getLevel() == 0) strLevel = "관리자";
+		else if(vo.getLevel() == 1) strLevel = "우수회원";
+		else if(vo.getLevel() == 2) strLevel = "정회원";
+		else if(vo.getLevel() == 3) strLevel = "준회원";
+		
+		session.setAttribute("sMid", vo.getMid());
+		session.setAttribute("sNickName", vo.getNickName());
+		session.setAttribute("sLevel", vo.getLevel());
+		session.setAttribute("strLevel", strLevel);
+		
+		// DB처리 내용 작업하기(방문포인트(?), 총방문횟수, 오늘방문횟수, 마지막방문일자
+		// 오늘 방문횟수 처리
+		Date nowDate = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String strDate = sdf.format(nowDate);
+		
+		int todayCnt = 0;
+		if(vo.getLastDate().substring(0, 10).equals(strDate)) todayCnt = vo.getTodayCnt() + 1;
+		else todayCnt = 1;
+		
+		memberService.setMemberInforUpdate(vo.getMid(), todayCnt);
+		
+		if(newMember.equals("NO")) return "redirect:/message/memberLoginOk?mid="+vo.getMid();
+		else return "redirect:/message/memberLoginNewOk?mid="+vo.getMid();
 	}
 	
 	// 로그인 OK시 회원 메인방으로 이동
@@ -187,7 +256,7 @@ public class MemberController {
 	
 	// 회원가입 처리하기
 	@RequestMapping(value = "/memberJoin", method = RequestMethod.POST)
-	public String memberJoinPost(MemberVO vo) {
+	public String memberJoinPost(MultipartFile fName, MemberVO vo) {
 		// 아이디/닉네임 중복체크
 		if(memberService.getMemberIdCheck(vo.getMid()) != null) return "redirect:/message/idCheckNo";
 		if(memberService.getMemberNickNameCheck(vo.getNickName()) != null) return "redirect:/message/nickCheckNo";
@@ -197,7 +266,10 @@ public class MemberController {
 		SecurityUtil security = new SecurityUtil();
 		vo.setPwd(salt + security.encryptSHA256(salt + vo.getPwd()));
 		
-		if(vo.getPhoto().equals("")) vo.setPhoto("noimage.jpg");
+		// 회원 사진 처리
+		//if(vo.getPhoto().equals("")) vo.setPhoto("noimage.jpg");
+		if(!fName.getOriginalFilename().equals("")) vo.setPhoto(memberService.getFileUpload(fName, vo.getMid()));
+		else vo.setPhoto("noimage.jpg");
 		
 		int res = memberService.setMemberJoinOk(vo);
 		
@@ -322,19 +394,21 @@ public class MemberController {
 	public String memberUpdateGet(Model model, HttpSession session) {
 		String mid = (String) session.getAttribute("sMid");
 		MemberVO vo = memberService.getMemberIdCheck(mid);
-		String[] tels = vo.getTel().split("-");
+		if(vo.getTel() != null && vo.getAddress() != null) {
+			String[] tels = vo.getTel().split("-");
+			String[] addresss = vo.getAddress().split("/");
+			
+			vo.setTel1(tels[0]);
+			vo.setTel2(tels[1]);
+			vo.setTel3(tels[2]);
+			vo.setPostcode(addresss[0]);
+			vo.setAddress(addresss[1]);
+			vo.setDetailAddress(addresss[2]);
+			vo.setExtraAddress(addresss[3]);		
+		}
 		String[] emails = vo.getEmail().split("@");
-		String[] addresss = vo.getAddress().split("/");
-		
-		vo.setTel1(tels[0]);
-		vo.setTel2(tels[1]);
-		vo.setTel3(tels[2]);
 		vo.setEmail1(emails[0]);
 		vo.setEmail2(emails[1]);
-		vo.setPostcode(addresss[0]);
-		vo.setAddress(addresss[1]);
-		vo.setDetailAddress(addresss[2]);
-		vo.setExtraAddress(addresss[3]);		
 		
 		model.addAttribute("vo", vo);
 		return "member/memberUpdate";

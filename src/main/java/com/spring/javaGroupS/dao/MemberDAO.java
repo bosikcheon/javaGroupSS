@@ -39,4 +39,8 @@ public interface MemberDAO {
 
 	MemberVO getMemberIdDuplicationCheck(@Param("mid") String mid);
 
+	MemberVO getMemberNickNameEmailCheck(@Param("nickName") String nickName, @Param("email") String email);
+
+	void setKakaoMemberInput(@Param("mid") String mid, @Param("nickName") String nickName, @Param("email") String email, @Param("pwd") String pwd);
+
 }

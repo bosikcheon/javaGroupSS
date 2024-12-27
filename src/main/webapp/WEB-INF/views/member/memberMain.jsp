@@ -17,6 +17,12 @@
 <div class="container">
   <h2>회 원 전 용 방</h2>
   <hr/>
+  <c:if test="${sLoginNew == 'OK'}">
+  	현재 임시비밀번호를 발급하여 회원님의 메일로 전송되어 있습니다.<br/>
+  	개인정보를 확인하시고, 비밀번호를 새로 변경해 주세요.
+	  <hr/>
+  </c:if>
+  <div>현재 로그인한곳 : ${sLogin}</div>
   <div>현재 <font color="blue"><b>${sNickName}(<font color="red">${strLevel}</font>)</b></font>님 로그인 중입니다.</div>
   <hr/>
   <c:if test="${sLevel == 3}">

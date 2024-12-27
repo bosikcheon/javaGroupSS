@@ -1,12 +1,15 @@
 package com.spring.javaGroupS.service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import com.spring.javaGroupS.vo.ChartVO;
+import com.spring.javaGroupS.vo.KakaoAddressVO;
 import com.spring.javaGroupS.vo.TransactionVO;
 import com.spring.javaGroupS.vo.User2VO;
 import com.spring.javaGroupS.vo.UserVO;
@@ -32,5 +35,17 @@ public interface StudyService {
 	int setValidatorInput(TransactionVO vo);
 
 	void setTransactionUserInput4(User2VO vo);
+
+	String setThumbnailCreate(MultipartFile file, HttpServletRequest request);
+
+	KakaoAddressVO getKakaoAddressSearch(String address);
+
+	int setKakaoAddressInput(KakaoAddressVO vo);
+
+	List<KakaoAddressVO> getKakaoAddressList();
+
+	int setKakaoAddressDelete(String address);
+
+	List<ChartVO> getMemberVisitCount();
 
 }

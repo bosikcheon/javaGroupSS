@@ -7,12 +7,36 @@
   <meta charset="UTF-8">
   <title>memberLogin.jsp</title>
   <jsp:include page="/WEB-INF/views/include/bs5.jsp" />
+  <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
   <style>
     th {
       text-align: center;
       background-color: #eee;
     }
   </style>
+  <script>
+    'use strict';
+    
+    // 카카오 로그인앱키
+  	window.Kakao.init("158c673636c9a17a27b67c95f2c6be5c");
+  	
+    function kakaoLogin() {
+    	window.Kakao.Auth.login({
+    		scope: 'profile_nickname, account_email',
+    		success:function(autoObj) {
+    			//console.log(Kakao.Auth.getAccessToken(), "정상적으로 토큰이 발급됨");
+    			window.Kakao.API.request({
+    				url : '/v2/user/me',
+    				success:function(res) {
+    					const kakao_account = res.kakao_account;
+    					//console.log("전송된정보 :",kakao_account);
+    					location.href="${ctp}/member/kakaoLogin?nickName="+kakao_account.profile.nickname+"&email="+kakao_account.email+"&accessToken="+Kakao.Auth.getAccessToken();
+    				}
+    			});
+    		}
+    	});
+    }
+  </script>
 </head>
 <body>
 <jsp:include page="/WEB-INF/views/include/nav.jsp" />
@@ -36,6 +60,7 @@
         <td colspan="2" class="text-center">
 		      <button type="submit" class="btn btn-success mr-2">로그인</button>
 		      <button type="reset" class="btn btn-warning mr-2">다시입력</button>
+		      <a href="javascript:kakaoLogin()"><img src="${ctp}/images/kakaoLogin.png" width="73px"/></a>
 		      <button type="button" onclick="location.href='memberJoin'" class="btn btn-info mr-3">회원가입</button>
 		      <input type="checkbox" name="idSave" checked /> 아이디 저장
 		    </td>

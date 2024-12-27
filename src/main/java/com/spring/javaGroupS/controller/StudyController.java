@@ -23,6 +23,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -31,6 +32,8 @@ import com.spring.javaGroupS.service.DbtestService;
 import com.spring.javaGroupS.service.MemberService;
 import com.spring.javaGroupS.service.StudyService;
 import com.spring.javaGroupS.service.UserService;
+import com.spring.javaGroupS.vo.ChartVO;
+import com.spring.javaGroupS.vo.KakaoAddressVO;
 import com.spring.javaGroupS.vo.MailVO;
 import com.spring.javaGroupS.vo.MemberVO;
 import com.spring.javaGroupS.vo.TransactionVO;
@@ -384,6 +387,191 @@ public class StudyController {
 		if(res != 0) return "redirect:/message/multiFileUploadOk";
 		else return "redirect:/message/multiFileUploadNo";
 	}
+	
+	// 썸네일 이미지 폼보기
+	@RequestMapping(value = "/thumbnail/thumbnailForm", method = RequestMethod.GET)
+	public String thumbnailGet() {
+		return "study/thumbnail/thumbnailForm";
+	}
+	
+	// 썸네일 이미지 처리하기
+	@ResponseBody
+	@RequestMapping(value = "/thumbnail/thumbnailForm", method = RequestMethod.POST)
+	public String thumbnailPost(MultipartFile file, HttpServletRequest request) {
+		return studyService.setThumbnailCreate(file, request);
+	}
+	
+	// 썸네일 이미지 리스트 보여주기
+	@RequestMapping(value = "/thumbnail/thumbnailList", method = RequestMethod.GET)
+	public String thumbnailListGet(Model model, HttpServletRequest request) {
+		String realPath = request.getSession().getServletContext().getRealPath("/resources/data/thumbnail/");
+		String[] files = new File(realPath).list();
+		
+		model.addAttribute("files", files);
+		model.addAttribute("fCount", (files.length / 2));
+		return "study/thumbnail/thumbnailList";
+	}
+	
+	// 썸네일 이미지 한건 삭제처리
+	@ResponseBody
+	@RequestMapping(value = "/thumbnail/thumbnailDelete", method = RequestMethod.POST)
+	public String thumbnailDeletePost(HttpServletRequest request, String file) {
+		String res = "0";
+		
+		String realPath = request.getSession().getServletContext().getRealPath("/resources/data/thumbnail/");
+		File oFile = new File(realPath + file);
+		File tFile = new File(realPath + file.substring(2));
+		
+		if(oFile.exists()) {
+			oFile.delete();
+			tFile.delete();
+			res = "1";
+		}
+		
+		return res;
+	}
+	
+	// 썸네일 이미지 전체 삭제처리
+	@ResponseBody
+	@RequestMapping(value = "/thumbnail/thumbnailDeleteAll", method = RequestMethod.POST)
+	public String thumbnailDeleteAllPost(HttpServletRequest request) {
+		String res = "0";
+		
+		String realPath = request.getSession().getServletContext().getRealPath("/resources/data/thumbnail/");
+		
+		File folder = new File(realPath);
+		if(!folder.exists()) return "0";
+		
+		File[] files = folder.listFiles();
+		
+		if(files.length != 0) {
+			for(File f : files) {
+				if(!f.isDirectory()) f.delete();
+			}
+			res = "1";
+		}
+		return res;
+	}
+	
+	@RequestMapping(value = "/kakao/kakaomap", method = RequestMethod.GET)
+	public String kakaomapGet() {
+		return "study/kakao/kakaomap";
+	}
+	
+	@RequestMapping(value = "/kakao/kakaoEx1", method = RequestMethod.GET)
+	public String kakaoEx1Get() {
+		return "study/kakao/kakaoEx1";
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/kakao/kakaoEx1", method = RequestMethod.POST)
+	public String kakaoEx1Post(KakaoAddressVO vo) {
+		int res = 0;
+		KakaoAddressVO searchVO = studyService.getKakaoAddressSearch(vo.getAddress());
+		if(searchVO == null) res = studyService.setKakaoAddressInput(vo);
+		return res + "";
+	}
+	
+	// 카카오맵 : MyDB에 저장된 지명 검색
+	@RequestMapping(value = "/kakao/kakaoEx2", method = RequestMethod.GET)
+	public String kakaoEx2Get(Model model,
+			@RequestParam(name="address", defaultValue = "", required = false) String address
+		) {
+		KakaoAddressVO vo = new KakaoAddressVO();		
+		
+		List<KakaoAddressVO> addressVos = studyService.getKakaoAddressList();
+		
+		if(address.equals("")) {
+			vo.setAddress("청주 그린컴퓨터학원");
+			vo.setLatitude(36.63516928441032);
+			vo.setLongitude(127.45954113569472);
+		}
+		else {
+			vo = studyService.getKakaoAddressSearch(address);
+		}
+		
+		model.addAttribute("addressVos", addressVos);
+		model.addAttribute("vo", vo);
+		
+		return "study/kakao/kakaoEx2";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/kakao/kakaoAddressDelete", method = RequestMethod.POST)
+	public String kakaoAddressDeletePost(String address) {
+		return studyService.setKakaoAddressDelete(address) + "";
+
+	}
+	
+	// 카카오DB에 저장된 키워드 검색 결과를..... MyDB에 저장하기....
+	@RequestMapping(value = "/kakao/kakaoEx3", method = RequestMethod.GET)
+	public String kakaoEx3Get(Model model,
+			@RequestParam(name="address", defaultValue = "", required = false) String address
+		) {
+		model.addAttribute("address", address);
+		return "study/kakao/kakaoEx3";
+	}
+	
+	// 차트 폼 보기
+	@RequestMapping(value = "/chart/chartForm", method = RequestMethod.GET)
+	public String chartFormGet(Model model,
+			@RequestParam(name="part", defaultValue = "barVChart", required = false) String part
+		) {
+		model.addAttribute("part", part);
+		return "study/chart/chartForm";
+	}
+	
+	// 차트2 폼 보기
+	@RequestMapping(value = "/chart2/chart2Form", method = RequestMethod.GET)
+	public String chart2FormGet(Model model,
+			@RequestParam(name="part", defaultValue = "barVChart", required = false) String part
+			) {
+		model.addAttribute("part", part);
+		return "study/chart2/chart2Form";
+	}
+	
+	// 차트2 폼 처리
+	@RequestMapping(value = "/chart2/chart2Form", method = RequestMethod.POST)
+	public String chart2FormPost(Model model, ChartVO vo,
+			@RequestParam(name="part", defaultValue = "barV", required = false) String part
+		) {
+		System.out.println("vo : " + vo);
+		model.addAttribute("part", part);
+		model.addAttribute("vo", vo);
+		return "study/chart2/chart2Form";
+	}
+	
+	
+	// 차트2 member 차트 처리(최근7일간 방문자수 / 가장 많이 방문한 방문자 5회원 보기)
+	@RequestMapping(value = "/chart2/memberViewChart", method = RequestMethod.GET)
+	public String memberViewChartGet(Model model,
+			@RequestParam(name="part", defaultValue = "barV", required = false) String part
+		) {
+		List<ChartVO> vos = null;
+		
+		if(part.equals("visitCount")) {
+			vos = studyService.getMemberVisitCount();
+			
+			String[] visitDates = new String[7];
+			int[] visitCounts = new int[7];
+			
+			for(int i=0; i<7; i++) {
+				visitDates[i] = vos.get(i).getVisitDate();
+				visitCounts[i] = vos.get(i).getVisitCount();
+			}
+			System.out.println("전체개수: " + visitCounts.length);
+			model.addAttribute("xTitle", "방문날짜");
+			model.addAttribute("regend", "하루 총 방문자수");
+			model.addAttribute("visitDates", visitDates);
+			model.addAttribute("visitCounts", visitCounts);
+			model.addAttribute("title", "최근 7일간 방문횟수");
+			model.addAttribute("subTitle", "(최근 7일간 방문한 방문자 총수를 표시합니다.");
+			model.addAttribute("part", part);
+		}
+		
+		return "study/chart2/chart2Form";
+	}
+	
 	
 	
 }

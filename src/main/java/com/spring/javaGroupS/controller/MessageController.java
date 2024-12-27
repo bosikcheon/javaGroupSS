@@ -28,6 +28,10 @@ public class MessageController {
 			model.addAttribute("message", mid + "회원님 로그인 되셨습니다.");
 			model.addAttribute("url", "member/memberMain");
 		}
+		else if(msgFlag.equals("memberLoginNewOk")) {
+			model.addAttribute("message", mid + "회원님 로그인 되셨습니다.\\n신규 비밀번호가 이메일로 전송되었습니다. 회원정보를 변경해주세요.");
+			model.addAttribute("url", "member/memberMain");
+		}
 		else if(msgFlag.equals("memberLogout")) {
 			model.addAttribute("message", "로그아웃 되셨습니다.");
 			model.addAttribute("url", "member/memberLogin");
@@ -263,6 +267,10 @@ public class MessageController {
 		else if(msgFlag.equals("wmMessageEmpty")) {
 			model.addAttribute("message", "휴지통이 비어 있습니다.");
 			model.addAttribute("url", "webMessage/webMessage?mSw=5");
+		}
+		else if(msgFlag.equals("memberIdSameCheck")) {
+			model.addAttribute("message", "같은 아이디로 가입한적이 있습니다. \\n아이디 확인후 다시 로그인해 주세요.\\n관리자에게 문의하세요.");
+			model.addAttribute("url", "member/memberLogin");
 		}
 		
 		

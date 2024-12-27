@@ -1,5 +1,6 @@
 package com.spring.javaGroupS.service;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,9 +18,13 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.spring.javaGroupS.dao.StudyDAO;
+import com.spring.javaGroupS.vo.ChartVO;
+import com.spring.javaGroupS.vo.KakaoAddressVO;
 import com.spring.javaGroupS.vo.TransactionVO;
 import com.spring.javaGroupS.vo.User2VO;
 import com.spring.javaGroupS.vo.UserVO;
+
+import net.coobird.thumbnailator.Thumbnailator;
 
 @Service
 public class StudyServiceImpl implements StudyService {
@@ -239,6 +244,54 @@ public class StudyServiceImpl implements StudyService {
 	public void setTransactionUserInput4(User2VO vo) {
 		studyDAO.setTransactionUserInput4(vo);
 	}
+
+	@Override
+	public String setThumbnailCreate(MultipartFile file, HttpServletRequest request) {
+		String res = "";
+		try {
+			String realPath = request.getSession().getServletContext().getRealPath("/resources/data/thumbnail/");
+			File oFile = new File(realPath + file.getOriginalFilename());
+			file.transferTo(oFile);
+			
+			String thumbnailFlie = realPath + "s_" + file.getOriginalFilename();
+			File tFile = new File(thumbnailFlie);
+			
+			int width = 160;
+			int height = width / 4 * 3;		// 4 : 3
+			Thumbnailator.createThumbnail(oFile, tFile, width, height);
+			
+			res = file.getOriginalFilename();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return res;
+	}
+
+	@Override
+	public KakaoAddressVO getKakaoAddressSearch(String address) {
+		return studyDAO.getKakaoAddressSearch(address);
+	}
+
+	@Override
+	public int setKakaoAddressInput(KakaoAddressVO vo) {
+		return studyDAO.setKakaoAddressInput(vo);
+	}
+
+	@Override
+	public List<KakaoAddressVO> getKakaoAddressList() {
+		return studyDAO.getKakaoAddressList();
+	}
+
+	@Override
+	public int setKakaoAddressDelete(String address) {
+		return studyDAO.setKakaoAddressDelete(address);
+	}
+
+	@Override
+	public List<ChartVO> getMemberVisitCount() {
+		return studyDAO.getMemberVisitCount();
+	}
+
 	
 	
 }
