@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.spring.javaGroupS.vo.ChartVO;
+import com.spring.javaGroupS.vo.CrimeVO;
 import com.spring.javaGroupS.vo.KakaoAddressVO;
 import com.spring.javaGroupS.vo.TransactionVO;
 import com.spring.javaGroupS.vo.User2VO;
@@ -47,5 +48,13 @@ public interface StudyService {
 	int setKakaoAddressDelete(String address);
 
 	List<ChartVO> getMemberVisitCount();
+
+	void setSaveCrimeData(CrimeVO vo);
+
+	int setDeleteCrimeData(int year);
+
+	ArrayList<CrimeVO> getListCrimeData(int year);
+
+	CrimeVO getYearPoliceCheck(int year, String police);
 
 }

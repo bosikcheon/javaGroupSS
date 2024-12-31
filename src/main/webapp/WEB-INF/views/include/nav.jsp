@@ -67,6 +67,9 @@
 	        <a href="${ctp}/study/kakao/kakaomap" class="w3-bar-item w3-button">카카오맵</a>
 	        <a href="${ctp}/study/chart/chartForm" class="w3-bar-item w3-button">구글차트1</a>
 	        <a href="${ctp}/study/chart2/chart2Form" class="w3-bar-item w3-button">구글차트2</a>
+	        <a href="${ctp}/study/restapi/restapiForm" class="w3-bar-item w3-button">Rest API</a>
+	        <a href="${ctp}/study/crawling/jsoupForm" class="w3-bar-item w3-button">크롤링(JSOUP)</a>
+	        <a href="${ctp}/study/crawling/seleniumForm" class="w3-bar-item w3-button">크롤링(Selenium)</a>
 	      </div>
 	    </div>
 	    <div class="w3-dropdown-hover w3-hide-small">

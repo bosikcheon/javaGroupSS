@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.spring.javaGroupS.dao.StudyDAO;
 import com.spring.javaGroupS.vo.ChartVO;
+import com.spring.javaGroupS.vo.CrimeVO;
 import com.spring.javaGroupS.vo.KakaoAddressVO;
 import com.spring.javaGroupS.vo.TransactionVO;
 import com.spring.javaGroupS.vo.User2VO;
@@ -290,6 +291,26 @@ public class StudyServiceImpl implements StudyService {
 	@Override
 	public List<ChartVO> getMemberVisitCount() {
 		return studyDAO.getMemberVisitCount();
+	}
+
+	@Override
+	public void setSaveCrimeData(CrimeVO vo) {
+		studyDAO.setSaveCrimeData(vo);
+	}
+
+	@Override
+	public int setDeleteCrimeData(int year) {
+		return studyDAO.setDeleteCrimeData(year);
+	}
+
+	@Override
+	public ArrayList<CrimeVO> getListCrimeData(int year) {
+		return studyDAO.getListCrimeData(year);
+	}
+
+	@Override
+	public CrimeVO getYearPoliceCheck(int year, String police) {
+		return studyDAO.getYearPoliceCheck(year, police);
 	}
 
 	

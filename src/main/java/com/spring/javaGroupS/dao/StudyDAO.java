@@ -1,10 +1,12 @@
 package com.spring.javaGroupS.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
 import com.spring.javaGroupS.vo.ChartVO;
+import com.spring.javaGroupS.vo.CrimeVO;
 import com.spring.javaGroupS.vo.KakaoAddressVO;
 import com.spring.javaGroupS.vo.TransactionVO;
 import com.spring.javaGroupS.vo.User2VO;
@@ -31,5 +33,13 @@ public interface StudyDAO {
 	int setKakaoAddressDelete(@Param("address") String address);
 
 	List<ChartVO> getMemberVisitCount();
+
+	void setSaveCrimeData(@Param("vo") CrimeVO vo);
+
+	int setDeleteCrimeData(@Param("year") int year);
+
+	ArrayList<CrimeVO> getListCrimeData(@Param("year") int year);
+
+	CrimeVO getYearPoliceCheck(@Param("year") int year, @Param("police") String police);
 
 }

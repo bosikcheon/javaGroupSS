@@ -1,6 +1,8 @@
 package com.spring.javaGroupS.controller;
 
 import java.io.File;
+import java.io.IOException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +13,17 @@ import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.aspectj.weaver.patterns.HasMemberTypePatternForPerThisMatching;
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -21,6 +34,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,12 +47,16 @@ import com.spring.javaGroupS.service.MemberService;
 import com.spring.javaGroupS.service.StudyService;
 import com.spring.javaGroupS.service.UserService;
 import com.spring.javaGroupS.vo.ChartVO;
+import com.spring.javaGroupS.vo.CrawLingVO;
+import com.spring.javaGroupS.vo.CrimeVO;
 import com.spring.javaGroupS.vo.KakaoAddressVO;
 import com.spring.javaGroupS.vo.MailVO;
 import com.spring.javaGroupS.vo.MemberVO;
 import com.spring.javaGroupS.vo.TransactionVO;
 import com.spring.javaGroupS.vo.User2VO;
 import com.spring.javaGroupS.vo.UserVO;
+
+import io.github.bonigarcia.wdm.WebDriverManager;
 
 //@RestController
 @Controller
@@ -570,6 +588,314 @@ public class StudyController {
 		}
 		
 		return "study/chart2/chart2Form";
+	}
+	
+	@RequestMapping(value = "/restapi/restapiForm", method = RequestMethod.GET)
+	public String restapiFormGet() {
+		return "study/restapi/restapiForm";
+	}
+	
+	@RequestMapping(value = "/restapi/restapiTest1/{message}", method = RequestMethod.GET)
+	public String restapiTest1Get(@PathVariable String message) {
+		System.out.println("message : " + message);
+		return "message : " + message;
+	}
+	
+	@RequestMapping(value = "/restapi/restapiTest4", method = RequestMethod.GET)
+	public String restapiTest4Get() {
+		return "study/restapi/restapiTest4";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/restapi/saveCrimeData", method = RequestMethod.POST)
+	public void saveCrimeDataPost(CrimeVO vo) {
+		studyService.setSaveCrimeData(vo);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/restapi/deleteCrimeData", method = RequestMethod.POST)
+	public String deleteCrimeDataPost(int year) {
+		return studyService.setDeleteCrimeData(year) + "";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/restapi/listCrimeData", method = RequestMethod.POST)
+	public ArrayList<CrimeVO> listCrimeDatePost(int year) {
+		return studyService.getListCrimeData(year);
+	}
+	
+	@RequestMapping(value = "/restapi/yearPoliceCheck", method = RequestMethod.POST)
+	public String policeCheckPost(Model model, int year, String police) {
+		CrimeVO analyzeVO = studyService.getYearPoliceCheck(year, police);
+		model.addAttribute("year", year);
+		model.addAttribute("police", police);
+		model.addAttribute("analyzeVO", analyzeVO);
+		return "study/restapi/restapiTest4";
+	}
+	
+	// 웹크롤링 (JSoup)
+	@RequestMapping(value = "/crawling/jsoupForm", method = RequestMethod.GET)
+	public String jsoupFormGet() {
+		return "study/crawling/jsoupForm";
+	}
+	
+	/*
+	@ResponseBody
+	@RequestMapping(value = "/crawling/jsoup", method = RequestMethod.POST, produces = "application/text; charset=utf-8")
+	public String jsoupPost(String url, String selector) throws IOException {
+		String str = "";
+		Connection conn = Jsoup.connect(url);
+		
+		Document document = conn.get();
+		//System.out.println("document : " + document);
+		
+		System.out.println("selector : " + selector);
+		Elements selectors = document.select(selector);
+		//System.out.println("selectors : " + selectors);
+		
+		int i=0;
+		for(Element select : selectors) {
+			i++;
+			//System.out.println("select : " + select);
+			System.out.println("select : " + select.text());
+			str += i + " : " + select + "<br/>";
+		}
+		//str = selectors.toString();
+		return str;
+	}
+	*/
+	
+	@ResponseBody
+	@RequestMapping(value = "/crawling/jsoup", method = RequestMethod.POST)
+	public ArrayList<String> jsoupPost(String url, String selector) throws IOException {
+		Connection conn = Jsoup.connect(url);
+		
+		Document document = conn.get();
+		//System.out.println("document : " + document);
+		
+		System.out.println("selector : " + selector);
+		Elements selectors = document.select(selector);
+		//System.out.println("selectors : " + selectors);
+		
+		ArrayList<String> vos = new ArrayList<String>();
+		int i=0;
+		for(Element select : selectors) {
+			i++;
+			//System.out.println("select : " + select);
+			System.out.println("select : " + select.text());
+			//vos.add(i + " : " + select.html());
+			vos.add(i + " : " + select.html().replace("data-", ""));
+		}
+		return vos;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/crawling/jsoup2", method = RequestMethod.POST)
+	public ArrayList<CrawLingVO> jsoup2Post() throws IOException {
+		Connection conn = Jsoup.connect("https://news.naver.com/");
+		
+		Document document = conn.get();
+		
+		Elements selectors = null;
+				
+		ArrayList<String> titleVos = new ArrayList<String>();
+		selectors = document.select("strong.cnf_news_title");
+		for(Element select : selectors) {
+			titleVos.add(select.html());
+		}
+		
+		ArrayList<String> imageVos = new ArrayList<String>();
+		selectors = document.select("div.cnf_news_thumb");
+		for(Element select : selectors) {
+			imageVos.add(select.html().replace("data-", ""));
+		}
+		
+		ArrayList<String> broadcastVos = new ArrayList<String>();
+		selectors = document.select("em.cnf_journal_name");
+		for(Element select : selectors) {
+			broadcastVos.add(select.html());
+		}
+		
+		ArrayList<String> checkVos = new ArrayList<String>();
+		selectors = document.select("div.comp_news_feed.comp_news_none");
+		for(Element select : selectors) {
+			checkVos.add(select.html().replace("data-", ""));
+		}
+		
+		ArrayList<CrawLingVO> vos = new ArrayList<CrawLingVO>();
+		CrawLingVO vo = null;
+		for(int i=0; i<imageVos.size(); i++) {
+			vo = new CrawLingVO();
+			vo.setItem1(titleVos.get(i));
+			vo.setItem2(imageVos.get(i));
+			vo.setItem3(broadcastVos.get(i));
+			vo.setItem4(checkVos.get(i));
+			vos.add(vo);
+		}
+		return vos;
+	}
+	
+	// 다음 엔터테인먼트 기사/사진/언론사 검색
+	@ResponseBody
+	@RequestMapping(value = "/crawling/jsoup3", method = RequestMethod.POST)
+	public ArrayList<CrawLingVO> jsoup3Post() throws IOException {
+		Connection conn = Jsoup.connect("https://entertain.daum.net/");
+		
+		Document document = conn.get();
+		
+		Elements selectors = null;
+		
+		ArrayList<String> titleVos = new ArrayList<String>();
+		selectors = document.select("a.link_txt.valid_link");
+		for(Element select : selectors) {
+			titleVos.add(select.html());
+		}
+		
+		ArrayList<String> imageVos = new ArrayList<String>();
+		selectors = document.select("a.link_thumb");
+		for(Element select : selectors) {
+			imageVos.add(select.html());
+		}
+		
+		ArrayList<String> broadcastVos = new ArrayList<String>();
+		selectors = document.select("span.info_thumb");
+		for(Element select : selectors) {
+			broadcastVos.add(select.html());
+		}
+		
+//		ArrayList<String> checkVos = new ArrayList<String>();
+//		selectors = document.select("div.comp_news_feed.comp_news_none");
+//		for(Element select : selectors) {
+//			checkVos.add(select.html().replace("data-", ""));
+//		}
+		
+		ArrayList<CrawLingVO> vos = new ArrayList<CrawLingVO>();
+		CrawLingVO vo = null;
+		for(int i=0; i<titleVos.size(); i++) {
+			vo = new CrawLingVO();
+			vo.setItem1(titleVos.get(i));
+			vo.setItem2(imageVos.get(i));
+			vo.setItem3(broadcastVos.get(i));
+//			vo.setItem4(checkVos.get(i));
+			vos.add(vo);
+		}
+		System.out.println("vos : " + vos);
+		return vos;
+	}
+	
+	// 네이버 검색어로 검색처리
+	@ResponseBody
+	@RequestMapping(value = "/crawling/jsoup4", method = RequestMethod.POST)
+	public ArrayList<String> jsoup4Post(String search, String searchSelector) throws IOException {
+		Connection conn = Jsoup.connect(search);
+		
+		Document document = conn.get();
+		
+		Elements selectors = document.select(searchSelector);
+		ArrayList<String> vos = new ArrayList<String>();
+		
+		int i = 0;
+		for(Element select : selectors) {
+			i++;
+			vos.add(i+ " : " + select.html().replace("data-", "").replace("lazy", ""));
+		}
+		return vos;
+	}
+	
+	// 멜론 차트 검색처리
+	@ResponseBody
+	@RequestMapping(value = "/crawling/jsoup5", method = RequestMethod.POST)
+	public ArrayList<CrawLingVO> jsoup5Post() throws IOException {
+		Connection conn = Jsoup.connect("https://www.melon.com/chart/index.htm");
+		Document document = conn.get();
+		
+		Elements selectors = null;
+		
+		ArrayList<String> rankVos = new ArrayList<String>();
+		selectors = document.select("td > div.wrap.t_center > span.rank");
+		for(Element select : selectors) {
+			rankVos.add(select.html());
+		}
+		
+		ArrayList<String> imageVos = new ArrayList<String>();
+		selectors = document.select("div.wrap > a.image_typeAll");
+		for(Element select : selectors) {
+			imageVos.add(select.html());
+		}
+		
+		ArrayList<String> songVos = new ArrayList<String>();
+		selectors = document.select("div.wrap_song_info > div.ellipsis.rank01");
+		for(Element select : selectors) {
+			songVos.add(select.html());
+		}
+		
+		ArrayList<String> singerVos = new ArrayList<String>();
+		selectors = document.select("div.ellipsis.rank02");
+		for(Element select : selectors) {
+			singerVos.add(select.html());
+		}
+		
+		ArrayList<CrawLingVO> vos = new ArrayList<CrawLingVO>();
+		CrawLingVO vo = null;
+		for(int i=0; i<100; i++) {
+			vo = new CrawLingVO();
+			vo.setItem1(rankVos.get(i));
+			vo.setItem2(imageVos.get(i));
+			vo.setItem3(songVos.get(i));
+			vo.setItem4(singerVos.get(i));
+			vos.add(vo);
+		}
+		return vos;
+	}
+	
+	// 웹크롤링 (Selenium)
+	@RequestMapping(value = "/crawling/seleniumForm", method = RequestMethod.GET)
+	public String seleniumFormGet() {
+		return "study/crawling/seleniumForm";
+	}
+
+	// 웹크롤링 (Selenium) 처리
+	@SuppressWarnings("unused")
+	@ResponseBody
+	@RequestMapping(value = "/crawling/selenium", method = RequestMethod.POST)
+	public List<HashMap<String, Object>> seleniumFormPost() {
+		List<HashMap<String, Object>> vos = new ArrayList<HashMap<String,Object>>();
+		
+		try {
+			WebDriver driver = new ChromeDriver();
+			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(6));
+			WebDriverManager.chromedriver().setup();
+			
+			driver.get("http://www.cgv.co.kr/movies/");
+			
+			// 현재 상영작만 보여주기
+			WebElement btnMore = driver.findElement(By.id("chk_nowshow"));
+			btnMore.click();
+			
+			btnMore = driver.findElement(By.className("link-more"));
+			btnMore.click();
+			
+			try { Thread.sleep(2000); } catch (InterruptedException e) {}
+			
+			List<WebElement> elements = driver.findElements(By.cssSelector("div.sect-movie-chart ol li"));
+			for(WebElement element : elements) {
+				HashMap<String, Object> map = new HashMap<String, Object>();
+				String link = element.findElement(By.tagName("a")).getAttribute("href");
+				String title = "<a href='"+link+"' target='_blank'>" + element.findElement(By.className("title")).getText() + "</a>";
+				String image = "<img src='"+element.findElement(By.tagName("img")).getAttribute("src")+"' width='150px' />";
+				String percent = element.findElement(By.className("percent")).getText();
+				map.put("lint", link);
+				map.put("title", title);
+				map.put("image", image);
+				map.put("percent", percent);
+				vos.add(map);
+			}
+			driver.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.out.println("vos : " + vos);
+		return vos;
 	}
 	
 	

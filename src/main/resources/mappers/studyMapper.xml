@@ -14,6 +14,16 @@
 		select substring(visitDate, 1, 10) as visitDate, visitCount from visit order by visitDate desc limit 7;
 	</select>
 	
+	<select id="getListCrimeData" resultType="com.spring.javaGroupS.vo.CrimeVO">
+		select * from crime where year = #{year} order by police;
+	</select>
+	
+	<select id="getYearPoliceCheck" resultType="com.spring.javaGroupS.vo.CrimeVO">
+		select year,sum(murder) as totMurder,sum(robbery) as totRobbery,sum(theft) as totTheft,sum(violence) as totViolence,
+		avg(murder) as avgMurder,avg(robbery) as avgRobbery,avg(theft) as avgTheft,avg(violence) as avgViolence
+		from crime where year=#{year} and police like concat('%',#{police},'%');
+	</select>
+	
 	
 	
 	<insert id="setTransactionUserInput">
@@ -42,10 +52,18 @@
 	  insert into kakaoAddress values (#{vo.address}, #{vo.latitude}, #{vo.longitude});
 	</insert>
 	
+	<insert id="setSaveCrimeData">
+	  insert into crime values (default,#{vo.year},#{vo.police},#{vo.murder},#{vo.robbery},#{vo.theft},#{vo.violence});
+	</insert>
+	
 	
 	
 	<delete id="setKakaoAddressDelete">
 	  delete from kakaoAddress where address = #{address};
+	</delete>
+	
+	<delete id="setDeleteCrimeData">
+	  delete from crime where year = #{year};
 	</delete>
 	
 </mapper>
