@@ -1,11 +1,13 @@
 package com.spring.javaGroupS.service;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.RandomStringUtils;
@@ -17,10 +19,18 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageConfig;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+import com.spring.javaGroupS.common.JavaGroupProvide;
 import com.spring.javaGroupS.dao.StudyDAO;
 import com.spring.javaGroupS.vo.ChartVO;
 import com.spring.javaGroupS.vo.CrimeVO;
 import com.spring.javaGroupS.vo.KakaoAddressVO;
+import com.spring.javaGroupS.vo.QrcodeVO;
 import com.spring.javaGroupS.vo.TransactionVO;
 import com.spring.javaGroupS.vo.User2VO;
 import com.spring.javaGroupS.vo.UserVO;
@@ -32,6 +42,9 @@ public class StudyServiceImpl implements StudyService {
 
 	@Autowired
 	StudyDAO studyDAO;
+	
+	@Autowired
+	JavaGroupProvide javaGroupProvide;
 
 	@Override
 	public String[] getCityStringArray(String dodo) {
@@ -311,6 +324,130 @@ public class StudyServiceImpl implements StudyService {
 	@Override
 	public CrimeVO getYearPoliceCheck(int year, String police) {
 		return studyDAO.getYearPoliceCheck(year, police);
+	}
+
+	@Override
+	public String setQrcodeCreate(String realPath) {
+		String qrcodeName = javaGroupProvide.newNameCreate(2);
+		String qrcodeImage = "";
+		
+		try {
+			qrcodeImage = "생성된 QR코드명 : " + qrcodeName;
+			qrcodeImage = new String(qrcodeImage.getBytes("UTF-8"), "ISO-8859-1");
+			
+			QRCodeWriter qrCodeWriter = new QRCodeWriter();
+			BitMatrix bitMatrix = qrCodeWriter.encode(qrcodeImage, BarcodeFormat.QR_CODE, 200, 200);
+			
+			int qrcodeColor = 0xFF000000;
+			int qrcodeBackColor = 0xFFFFFFFF;
+			
+			MatrixToImageConfig matrixToImageConfig = new MatrixToImageConfig(qrcodeColor, qrcodeBackColor);
+			BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(bitMatrix, matrixToImageConfig);
+			
+			ImageIO.write(bufferedImage, "png", new File(realPath + qrcodeName + ".png"));
+		} catch (IOException e) {
+			System.out.println("qr코드 생성실패~" + e.getMessage());
+		} catch (WriterException e) {
+			e.printStackTrace();
+		}
+		return qrcodeName;
+	}
+
+	@Override
+	public String setqrcodeCreate1(String realPath, QrcodeVO vo) {
+		String qrcodeName = javaGroupProvide.newNameCreate(2);
+		String qrcodeImage = "";
+		
+		try {
+			qrcodeName += vo.getMid() + "_" + vo.getName() + "_" + vo.getEmail();
+			qrcodeImage = "생성날짜 : " + qrcodeName.substring(0, 4) + "년, " + qrcodeName.substring(4, 6) + "월, " + qrcodeName.substring(6, 8) + "일\n";
+			qrcodeImage += "아이디 : " + vo.getMid() + "\n";
+			qrcodeImage += "성명 : " + vo.getName() + "\n";
+			qrcodeImage += "이메일 : " + vo.getEmail();
+			qrcodeImage = new String(qrcodeImage.getBytes("UTF-8"), "ISO-8859-1");
+			
+			// QR코드 만들기
+			QRCodeWriter qrCodeWriter = new QRCodeWriter();
+			BitMatrix bitMatrix = qrCodeWriter.encode(qrcodeImage, BarcodeFormat.QR_CODE, 200, 200);
+			
+			int qrcodeColor = 0xFF000000;
+			int qrcodeBackColor = 0xFFFFFFFF;
+			
+			MatrixToImageConfig matrixToImageConfig = new MatrixToImageConfig(qrcodeColor, qrcodeBackColor);
+			BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(bitMatrix, matrixToImageConfig);
+			
+			ImageIO.write(bufferedImage, "png", new File(realPath + qrcodeName + ".png"));
+		} catch (IOException e) {
+			System.out.println("qr코드 생성실패~" + e.getMessage());
+		} catch (WriterException e) {
+			e.printStackTrace();
+		}
+		return qrcodeName;
+	}
+
+	@Override
+	public String setqrcodeCreate2(String realPath, QrcodeVO vo) {
+		String qrcodeName = javaGroupProvide.newNameCreate(2);
+		String qrcodeImage = "";
+		
+		try {
+			//qrcodeName += vo.getSubject() + "_" + vo.getMoveUrl();
+			qrcodeName += vo.getSubject();
+			qrcodeImage = vo.getMoveUrl();
+			qrcodeImage = new String(qrcodeImage.getBytes("UTF-8"), "ISO-8859-1");
+			
+			// QR코드 만들기
+			QRCodeWriter qrCodeWriter = new QRCodeWriter();
+			BitMatrix bitMatrix = qrCodeWriter.encode(qrcodeImage, BarcodeFormat.QR_CODE, 200, 200);
+			
+			int qrcodeColor = 0xFF000000;
+			int qrcodeBackColor = 0xFFFFFFFF;
+			
+			MatrixToImageConfig matrixToImageConfig = new MatrixToImageConfig(qrcodeColor, qrcodeBackColor);
+			BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(bitMatrix, matrixToImageConfig);
+			
+			ImageIO.write(bufferedImage, "png", new File(realPath + qrcodeName + ".png"));
+		} catch (IOException e) {
+			System.out.println("qr코드 생성실패~" + e.getMessage());
+		} catch (WriterException e) {
+			e.printStackTrace();
+		}
+		return qrcodeName;
+	}
+
+	@Override
+	public String setqrcodeCreate3(String realPath, QrcodeVO vo) {
+		String qrcodeName = javaGroupProvide.newNameCreate(2);
+		String qrcodeImage = "";
+		
+		try {
+			qrcodeName += vo.getMovieCinema() + "_" + vo.getMovieName() + "_" + vo.getMovieDate() + "_" + vo.getMovieTime() + "_" + vo.getMovieAdult() + "_" + vo.getMovieChild();
+			qrcodeImage = "구매자 ID : " + vo.getMid() + "\n";
+			qrcodeImage += "상영관 : " + vo.getMovieCinema() + "\n";
+			qrcodeImage += "영화제목 : " + vo.getMovieName() + "\n";
+			qrcodeImage += "상영일자 : " + vo.getMovieDate() + "\n";
+			qrcodeImage += "상영시간 : " + vo.getMovieTime() + "\n";
+			qrcodeImage += "성인구매인원수 : " + vo.getMovieAdult() + "\n";
+			qrcodeImage += "소인구매인원수 : " + vo.getMovieChild();
+			qrcodeImage = new String(qrcodeImage.getBytes("UTF-8"), "ISO-8859-1");
+			
+			// QR코드 만들기
+			QRCodeWriter qrCodeWriter = new QRCodeWriter();
+			BitMatrix bitMatrix = qrCodeWriter.encode(qrcodeImage, BarcodeFormat.QR_CODE, 200, 200);
+			
+			int qrcodeColor = 0xFF000000;
+			int qrcodeBackColor = 0xFFFFFFFF;
+			
+			MatrixToImageConfig matrixToImageConfig = new MatrixToImageConfig(qrcodeColor, qrcodeBackColor);
+			BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(bitMatrix, matrixToImageConfig);
+			
+			ImageIO.write(bufferedImage, "png", new File(realPath + qrcodeName + ".png"));
+		} catch (IOException e) {
+			System.out.println("qr코드 생성실패~" + e.getMessage());
+		} catch (WriterException e) {
+			e.printStackTrace();
+		}
+		return qrcodeName;
 	}
 
 	

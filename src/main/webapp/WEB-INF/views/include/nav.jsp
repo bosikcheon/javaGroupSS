@@ -70,6 +70,8 @@
 	        <a href="${ctp}/study/restapi/restapiForm" class="w3-bar-item w3-button">Rest API</a>
 	        <a href="${ctp}/study/crawling/jsoupForm" class="w3-bar-item w3-button">크롤링(JSOUP)</a>
 	        <a href="${ctp}/study/crawling/seleniumForm" class="w3-bar-item w3-button">크롤링(Selenium)</a>
+	        <a href="${ctp}/study/qrcode/qrcodeForm" class="w3-bar-item w3-button">QR코드연습</a>
+	        <a href="${ctp}/study/captcha/captchaForm" class="w3-bar-item w3-button">캡차연습</a>
 	      </div>
 	    </div>
 	    <div class="w3-dropdown-hover w3-hide-small">

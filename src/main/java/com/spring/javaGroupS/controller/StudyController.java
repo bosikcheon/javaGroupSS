@@ -1,5 +1,11 @@
 package com.spring.javaGroupS.controller;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
@@ -8,12 +14,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import javax.imageio.ImageIO;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.RandomStringUtils;
-import org.aspectj.weaver.patterns.HasMemberTypePatternForPerThisMatching;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -52,6 +59,7 @@ import com.spring.javaGroupS.vo.CrimeVO;
 import com.spring.javaGroupS.vo.KakaoAddressVO;
 import com.spring.javaGroupS.vo.MailVO;
 import com.spring.javaGroupS.vo.MemberVO;
+import com.spring.javaGroupS.vo.QrcodeVO;
 import com.spring.javaGroupS.vo.TransactionVO;
 import com.spring.javaGroupS.vo.User2VO;
 import com.spring.javaGroupS.vo.UserVO;
@@ -898,6 +906,193 @@ public class StudyController {
 		return vos;
 	}
 	
+	// 크롤링연습 처리(selenium) - SRT 열차 조회하기
+	@SuppressWarnings("unused")
+	@ResponseBody
+	@RequestMapping(value = "/crawling/train", method = RequestMethod.POST)
+	public List<HashMap<String, Object>> trainPost(HttpServletRequest request, String stationStart, String stationStop) {
+		List<HashMap<String, Object>> array = new ArrayList<HashMap<String,Object>>();
+		try {
+			WebDriver driver = new ChromeDriver();
+			
+			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+      WebDriverManager.chromedriver().setup();			
+			
+			driver.get("http://srtplay.com/train/schedule");
+
+			WebElement btnMore = driver.findElement(By.xpath("//*[@id=\"station-start\"]/span"));
+			btnMore.click();
+      try { Thread.sleep(2000);} catch (InterruptedException e) {}
+      
+      btnMore = driver.findElement(By.xpath("//*[@id=\"station-pos-input\"]"));
+      btnMore.sendKeys(stationStart);
+      btnMore = driver.findElement(By.xpath("//*[@id=\"stationListArea\"]/li/label/div/div[2]"));
+      btnMore.click();
+      btnMore = driver.findElement(By.xpath("//*[@id=\"stationDiv\"]/div/div[3]/div/button"));
+      btnMore.click();
+      try { Thread.sleep(2000);} catch (InterruptedException e) {}
+      
+      btnMore = driver.findElement(By.xpath("//*[@id=\"station-arrive\"]/span"));
+      btnMore.click();
+      try { Thread.sleep(2000);} catch (InterruptedException e) {}
+      btnMore = driver.findElement(By.id("station-pos-input"));
+      
+      btnMore.sendKeys(stationStop);
+      btnMore = driver.findElement(By.xpath("//*[@id=\"stationListArea\"]/li/label/div/div[2]"));
+      btnMore.click();
+      btnMore = driver.findElement(By.xpath("//*[@id=\"stationDiv\"]/div/div[3]/div/button"));
+      btnMore.click();
+      try { Thread.sleep(2000);} catch (InterruptedException e) {}
+
+      btnMore = driver.findElement(By.xpath("//*[@id=\"sr-train-schedule-btn\"]/div/button"));
+      btnMore.click();
+      try { Thread.sleep(2000);} catch (InterruptedException e) {}
+      
+      List<WebElement> timeElements = driver.findElements(By.cssSelector(".table-body ul.time-list li"));
+ 			
+      HashMap<String, Object> map = null;
+      
+			for(WebElement element : timeElements){
+				map = new HashMap<String, Object>();
+				String train=element.findElement(By.className("train")).getText();
+				String start=element.findElement(By.className("start")).getText();
+				String arrive=element.findElement(By.className("arrive")).getText();
+				String time=element.findElement(By.className("time")).getText();
+				String price=element.findElement(By.className("price")).getText();
+				map.put("train", train);
+				map.put("start", start);
+				map.put("arrive", arrive);
+				map.put("time", time);
+				map.put("price", price);
+				array.add(map);
+			}
+			
+      // 요금조회하기 버튼을 클릭한다.(처리 안됨 - 스크린샷으로 대체)
+//      btnMore = driver.findElement(By.xpath("//*[@id=\"scheduleDiv\"]/div[2]/div/ul/li[1]/div/div[5]/button"));
+      //System.out.println("요금 조회버튼클릭");
+//      btnMore.click();
+//      try { Thread.sleep(2000);} catch (InterruptedException e) {}
+      
+      driver.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return array;
+	}
+
+	// QR 코드 연습폼 보기
+	@RequestMapping(value = "/qrcode/qrcodeForm", method = RequestMethod.GET)
+	public String qrcodeFormGet() {
+		return "study/qrcode/qrcodeForm";
+	}
 	
+	// QR 코드 생성
+	@ResponseBody
+	@RequestMapping(value = "/qrcode/qrcodeCreate", method = RequestMethod.POST)
+	public String qrcodeCreatePost(HttpServletRequest request) {
+		String realPath = request.getSession().getServletContext().getRealPath("/resources/data/qrcode/");				
+		return studyService.setQrcodeCreate(realPath);
+	}
 	
+	// 개인정보 QR 코드 생성폼 보기
+	@RequestMapping(value = "/qrcode/qrcodeEx1", method = RequestMethod.GET)
+	public String qrcodeEx1Get() {
+		return "study/qrcode/qrcodeEx1";
+	}
+	
+	// 개인정보 QR 코드 생성
+	@ResponseBody
+	@RequestMapping(value = "/qrcode/qrcodeCreate1", method = RequestMethod.POST, produces = "application/text; charset=utf-8")
+	public String qrcodeCreate1Post(HttpServletRequest request, QrcodeVO vo) {
+		String realPath = request.getSession().getServletContext().getRealPath("/resources/data/qrcode/");				
+	return studyService.setqrcodeCreate1(realPath, vo);
+	}
+	
+	// 소개사이트 QR 코드 생성폼 보기
+	@RequestMapping(value = "/qrcode/qrcodeEx2", method = RequestMethod.GET)
+	public String qrcodeEx2Get() {
+		return "study/qrcode/qrcodeEx2";
+	}
+	
+	// 소개사이트 QR 코드 생성
+	@ResponseBody
+	@RequestMapping(value = "/qrcode/qrcodeCreate2", method = RequestMethod.POST, produces = "application/text; charset=utf-8")
+	public String qrcodeCreate2Post(HttpServletRequest request, QrcodeVO vo) {
+		String realPath = request.getSession().getServletContext().getRealPath("/resources/data/qrcode/");				
+		return studyService.setqrcodeCreate2(realPath, vo);
+	}
+	
+	// 소개사이트 QR 코드 생성폼 보기
+	@RequestMapping(value = "/qrcode/qrcodeEx3", method = RequestMethod.GET)
+	public String qrcodeEx3Get() {
+		return "study/qrcode/qrcodeEx3";
+	}
+	
+	// 소개사이트 QR 코드 생성
+	@ResponseBody
+	@RequestMapping(value = "/qrcode/qrcodeCreate3", method = RequestMethod.POST, produces = "application/text; charset=utf-8")
+	public String qrcodeCreate3Post(HttpServletRequest request, QrcodeVO vo) {
+		MemberVO mVo = memberService.getMemberIdCheck(vo.getMid());
+	  vo.setEmail(mVo.getEmail());
+		
+		String realPath = request.getSession().getServletContext().getRealPath("/resources/data/qrcode/");				
+		return studyService.setqrcodeCreate3(realPath, vo);
+	}
+	
+	// 캡차 생성메소드 호출
+	@RequestMapping(value = "/captcha/captchaForm", method = RequestMethod.GET)
+	public String captchaFormGet() {
+		return "redirect:/study/captcha/captchaImage";
+	}
+	
+	// 캡차 성성후 폼으로 전송처리
+	@RequestMapping(value = "/captcha/captchaImage", method = RequestMethod.GET)
+	public String captchaImageGet(HttpServletRequest request, Model model, HttpSession session) {
+		/*
+		Font[] fontList = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
+		for(Font f : fontList) {
+			System.out.println(f.getFontName());
+		}
+		*/
+		
+		try {
+			String str = RandomStringUtils.randomAlphanumeric(5);
+			System.out.println("str : " + str);
+			session.setAttribute("sCaptcha", str);
+			
+			Font font = new Font("Jokerman", Font.ITALIC, 30);
+			FontRenderContext frc = new FontRenderContext(null, true, true);
+			Rectangle2D bounds = font.getStringBounds(str, frc);
+			int w = (int) bounds.getWidth();
+			int h = (int) bounds.getHeight();
+			
+			BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_BGR);
+			Graphics2D g = image.createGraphics();
+			
+			g.fillRect(0, 0, w, h);
+			g.setColor(new Color(0, 156, 240));
+			g.setFont(font);
+			
+			//g.drawString(str, (float) bounds.getX(), (float) -bounds.getY());
+			g.drawString(str, 0, h);
+			g.dispose();
+			
+			String realPath = request.getSession().getServletContext().getRealPath("/resources/data/captcha/");
+			int temp = (int)(Math.random()*5) + 1;
+			String captchaImage = "captchaImage" + temp + ".png";
+			
+			ImageIO.write(image, "png", new File(realPath + captchaImage));
+			model.addAttribute("captchaImage", captchaImage);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return "study/captcha/captchaForm";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/captcha/captchaCheck", method = RequestMethod.POST)
+	public String captcapCheckPost(HttpSession session, String strCaptcha) {
+		if(strCaptcha.equals(session.getAttribute("sCaptcha"))) return "1";
+		else return "0";
+	}
 }
