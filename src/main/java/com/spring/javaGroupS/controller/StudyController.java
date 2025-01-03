@@ -1005,7 +1005,7 @@ public class StudyController {
 	@RequestMapping(value = "/qrcode/qrcodeCreate1", method = RequestMethod.POST, produces = "application/text; charset=utf-8")
 	public String qrcodeCreate1Post(HttpServletRequest request, QrcodeVO vo) {
 		String realPath = request.getSession().getServletContext().getRealPath("/resources/data/qrcode/");				
-	return studyService.setqrcodeCreate1(realPath, vo);
+		return studyService.setqrcodeCreate1(realPath, vo);
 	}
 	
 	// 소개사이트 QR 코드 생성폼 보기
@@ -1045,7 +1045,7 @@ public class StudyController {
 		return "redirect:/study/captcha/captchaImage";
 	}
 	
-	// 캡차 성성후 폼으로 전송처리
+	// 캡차 생성후 폼으로 전송처리
 	@RequestMapping(value = "/captcha/captchaImage", method = RequestMethod.GET)
 	public String captchaImageGet(HttpServletRequest request, Model model, HttpSession session) {
 		/*

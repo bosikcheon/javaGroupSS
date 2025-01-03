@@ -53,6 +53,10 @@
     		}
     	});
     }
+    
+    function qrDbCheck() {
+    	
+    }
   </script>
 </head>
 <body>
@@ -142,9 +146,10 @@
   <div class="input-group">
     <div >아이디</div> 
     <input type="text" name="mid" id="mid" value="${sMid}" />
-    <input type="button" value="확인" onclick="" class="btn btn-success"/>
+    <input type="button" value="확인" onclick="qrDbCheck()" class="btn btn-success"/>
   </div>
 </div>
+<div id="demoCheck"></div>
 <p><br/></p>
 <jsp:include page="/WEB-INF/views/include/footer.jsp" />
 </body>

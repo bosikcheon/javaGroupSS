@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.javaGroupS.dao.SurveyDAO">
+
+	<select id="getLastIdx" resultType="int">
+	  select idx from survey order by idx desc limit 1;
+	</select>
+	
+	<select id="getSurveyList" resultType="com.spring.javaGroupS.vo.SurveyVO">
+		<if test="showSw != 99">
+		  select * from survey where showSw=#{showSw} order by idx desc;
+		</if>
+		<if test="showSw == 99">
+		  select * from survey order by idx desc;
+		</if>
+	</select>
+
+	<select id="getSurvey" resultType="com.spring.javaGroupS.vo.SurveyVO">
+	  select * from survey where idx = #{idx};
+	</select>
+	
+	<select id="getSurveyQuestions" resultType="com.spring.javaGroupS.vo.SurveyQuestionVO">
+	  select * from surveyQuestion where sIdx = #{idx};
+	</select>
+	
+	<select id="getSurveyAnswers" resultType="com.spring.javaGroupS.vo.SurveyQuestionContentVO">
+	  select *,(select count(*) from surveyRealAnswer where aIdx=a.idx <if test="part!=''"> and bIdx in (select idx from surveyBasic where ${part}=#{smallPart})</if> group by aIdx ) as realAnswerCnt from surveyQuestionContent a where sIdx = #{idx};
+	</select>
+	
+	<select id="getBasicSurveyIdx" resultType="int">
+	  select idx from surveyBasic order by idx desc limit 1;
+	</select>
+	
+	<select id="getRealAnswer" resultType="com.spring.javaGroupS.vo.SurveyRealAnswerVO">
+		select * from surveyRealAnswer where sIdx=#{idx} <if test="part!=''"> and bIdx in (select idx from surveyBasic where ${part}=#{smallPart})</if>;
+	</select>
+	
+	<select id="getRealAnswerSmallPart" resultType="String">
+		select ${part} from surveyBasic <if test="part!=''"> group by ${part}</if>;
+	</select>
+	
+
+
+
+	<insert id="setSurveyInput">
+	  insert into survey values (default,#{vo.title},default,#{vo.startDate},#{vo.endDate},#{vo.showSw});
+	</insert>
+	
+	<insert id="setSurveyAnswerInput">
+	  insert into surveyQuestionContent values (default,#{vo.sIdx},#{vo.qIdx},#{vo.acontent});
+	</insert>
+	
+	<insert id="setSurveyQuestionInput">
+	  insert into surveyQuestion values (default,#{vo.sIdx},#{vo.qcontent},#{vo.answerSw});
+	</insert>
+	
+	<insert id="setBasicSurveyInput">
+		insert into surveyBasic values(default,#{vo.gender},#{vo.age},#{vo.address});
+	</insert>
+	
+	<insert id="setSurveyRealAnswerInput">
+		insert into surveyRealAnswer values (default, #{vo.bIdx}, #{vo.sIdx}, #{vo.qIdx}, #{vo.aIdx}, #{vo.detailAnswer});
+	</insert>
+	
+	
+	<update id="setSurveyUpdate">
+	  update survey set title=#{vo.title}, showSw=#{vo.showSw}, startDate=#{vo.startDate}, endDate=#{vo.endDate} where idx=#{vo.idx};
+	</update>
+	
+	<update id="setSurveyQuestionUpdate">
+	  update surveyQuestion set qcontent = #{vo.qcontent} where idx=#{vo.idx};
+	</update>
+	
+	
+	<delete id="setSurveyAnswerDelete">
+	  delete from surveyQuestionContent where idx = #{idx};
+	</delete>
+	
+	<delete id="setSurveyQuestionDelete">
+	  delete from surveyQuestion where idx = #{idx};
+	</delete>
+	
+
+</mapper>

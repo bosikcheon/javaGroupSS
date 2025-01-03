@@ -14,6 +14,16 @@
 		body {font-family: "Lato", sans-serif}
 		.mySlides {display: none}
 	</style>
+	<script>
+	  'use strict';
+	  
+	  // 설문조사항목중 showSw가 1인 항목은 무조건 화면에 출력시킨다.(지정날짜동안 계속해서 뿌리되, 쿠키처리할것(오늘은 더이상 보이지 않기))
+    let url = "";
+	  <c:forEach var="vo" items="${surveyVos}">
+	  	url = "${ctp}/survey/basicSurvey?idx=${vo.idx}";
+	    window.open(url,"survey${vo.idx}", "width=500px,height=800px");
+	  </c:forEach>
+	</script>
 </head>
 <body>
 

@@ -272,6 +272,14 @@ public class MessageController {
 			model.addAttribute("message", "같은 아이디로 가입한적이 있습니다. \\n아이디 확인후 다시 로그인해 주세요.\\n관리자에게 문의하세요.");
 			model.addAttribute("url", "member/memberLogin");
 		}
+		else if(msgFlag.equals("surveyInput")) {
+			model.addAttribute("message", "설문지 주항목 제목이 저장되었습니다.");
+			model.addAttribute("url", "survey/surveyInput");
+		}
+		else if(msgFlag.equals("surveyUpdateOk")) {
+			model.addAttribute("message", "설문지 주항목 제목이 수정되었습니다.");
+			model.addAttribute("url", "survey/surveyUpdate?idx="+idx);
+		}
 		
 		
 		

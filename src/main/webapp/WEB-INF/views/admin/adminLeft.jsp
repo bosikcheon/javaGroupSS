@@ -40,6 +40,12 @@
       <a href="${ctp}/admin/board/boardList" target="adminContent">게시판리스트</a>
     </div>
   </div>
+  <hr/>
+  <div>
+    <h5>설문지관리</h5>
+    <div><a href="${ctp}/survey/surveyInput" target="adminContent">설문지등록</a></div>
+    <div><a href="${ctp}/survey/surveyList" target="adminContent">설문지리스트</a></div>
+  </div>
 </div>
 </body>
 </html>
