@@ -72,12 +72,14 @@
 	        <a href="${ctp}/study/crawling/seleniumForm" class="w3-bar-item w3-button">크롤링(Selenium)</a>
 	        <a href="${ctp}/study/qrcode/qrcodeForm" class="w3-bar-item w3-button">QR코드연습</a>
 	        <a href="${ctp}/study/captcha/captchaForm" class="w3-bar-item w3-button">캡차연습</a>
+	        <a href="${ctp}/study/infiniteScroll/infiniteScroll" class="w3-bar-item w3-button">게시판연습</a>
 	      </div>
 	    </div>
 	    <div class="w3-dropdown-hover w3-hide-small">
 	      <button class="w3-padding-large w3-button" title="More" onclick="location.href='${ctp}/member/memberMain';">MyPage <i class="fa fa-caret-down"></i></button>     
 	      <div class="w3-dropdown-content w3-bar-block w3-card-4">
 	        <a href="${ctp}/webMessage/webMessage" class="w3-bar-item w3-button">웹메세지</a>
+	        <a href="${ctp}/webSocket/webSocket" class="w3-bar-item w3-button">웹소켓채팅</a>
 	        <a href="${ctp}/member/memberList" class="w3-bar-item w3-button">회원리스트</a>
 	        <a href="${ctp}/member/memberPwdCheck/p" class="w3-bar-item w3-button">비밀번호변경</a>
 	        <a href="${ctp}/member/memberPwdCheck/i" class="w3-bar-item w3-button">회원정보수정</a>

@@ -48,11 +48,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.servlet.ModelAndView;
 
+import com.spring.javaGroupS.service.BoardService;
 import com.spring.javaGroupS.service.DbtestService;
 import com.spring.javaGroupS.service.MemberService;
 import com.spring.javaGroupS.service.StudyService;
 import com.spring.javaGroupS.service.UserService;
+import com.spring.javaGroupS.vo.BoardVO;
 import com.spring.javaGroupS.vo.ChartVO;
 import com.spring.javaGroupS.vo.CrawLingVO;
 import com.spring.javaGroupS.vo.CrimeVO;
@@ -85,6 +88,9 @@ public class StudyController {
 	
 	@Autowired
 	UserService userService;
+	
+	@Autowired
+	BoardService boardService;
 	
 	@RequestMapping(value="/ajax/ajaxForm", method = RequestMethod.GET)
 	public String ajaxFormGet() {
@@ -1094,5 +1100,30 @@ public class StudyController {
 	public String captcapCheckPost(HttpSession session, String strCaptcha) {
 		if(strCaptcha.equals(session.getAttribute("sCaptcha"))) return "1";
 		else return "0";
+	}
+	
+	@RequestMapping(value = "/infiniteScroll/infiniteScroll", method = RequestMethod.GET)
+	public String infiniteScrollGet(Model model,
+			@RequestParam(name="pag", defaultValue = "1", required = false) int pag, 
+			@RequestParam(name="pageSize", defaultValue = "3", required = false) int pageSize
+		) {
+		int startIndexNo = (pag - 1) * pageSize;
+		List<BoardVO> vos = boardService.getBoardList(startIndexNo, pageSize);
+		model.addAttribute("vos", vos);
+		return "study/infiniteScroll/infiniteScroll";
+	}
+	
+	@RequestMapping(value = "/infiniteScroll/infiniteScrollPaging", method = RequestMethod.POST)
+	public ModelAndView infiniteScrollPagingPost(Model model,
+			@RequestParam(name="pag", defaultValue = "1", required = false) int pag, 
+			@RequestParam(name="pageSize", defaultValue = "3", required = false) int pageSize
+			) {
+		int startIndexNo = (pag - 1) * pageSize;
+		List<BoardVO> vos = boardService.getBoardList(startIndexNo, pageSize);
+		model.addAttribute("vos", vos);
+		
+		ModelAndView mv = new ModelAndView();
+		mv.setViewName("study/infiniteScroll/infiniteScrollPaging");
+		return mv;
 	}
 }

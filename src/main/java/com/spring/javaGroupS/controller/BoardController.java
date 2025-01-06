@@ -105,6 +105,7 @@ public class BoardController {
 			contentNum.add(imsiContentNum);
 		}
 		session.setAttribute("sContent", contentNum);
+		
 		BoardVO vo = boardService.getBoardContent(idx);
 		model.addAttribute("vo", vo);
 		

@@ -106,4 +106,12 @@ public class HomeController {
 		// 다운로드 완료후에 서버에 저장된 zip파일을 삭제처리한다.
 		downFile.delete();
 	}
+	
+	// 채팅창 띄우기
+	@RequestMapping(value = "/webSocket/webSocket", method = RequestMethod.GET)
+	public String webSocketGet() {
+		return "webSocket/webSocket";
+	}
+	
+	
 }
