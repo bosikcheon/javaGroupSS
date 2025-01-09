@@ -2,8 +2,6 @@ package com.spring.javaGroupS.dao;
 
 import java.util.List;
 
-import org.springframework.stereotype.Repository;
-
 import com.spring.javaGroupS.vo.UserVO;
 
 //@Repository

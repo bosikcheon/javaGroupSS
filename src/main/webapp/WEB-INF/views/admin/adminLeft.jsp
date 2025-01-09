@@ -46,6 +46,16 @@
     <div><a href="${ctp}/survey/surveyInput" target="adminContent">설문지등록</a></div>
     <div><a href="${ctp}/survey/surveyList" target="adminContent">설문지리스트</a></div>
   </div>
+  <hr/>
+  <div>
+    <h5>쇼핑몰관리</h5>
+    <div><a href="${ctp}/" target="adminContent">상품분류등록</a></div>
+    <div><a href="${ctp}/dbShop/dbProduct" target="adminContent">상품등록관리</a></div>
+    <div><a href="${ctp}/dbShop/dbShopList" target="adminContent">상품등록조회</a></div>
+    <div><a href="${ctp}/dbShop/dbOption" target="adminContent">옵션등록관리</a></div>
+    <div><a href="${ctp}/" target="adminContent">주문관리</a></div>
+    <div><a href="${ctp}/" target="adminContent">1:1문의</a></div>
+  </div>
 </div>
 </body>
 </html>

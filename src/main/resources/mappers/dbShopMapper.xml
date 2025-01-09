@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.javaGroupS.dao.DbShopDAO">
+  
+  <select id="getCategoryMain" resultType="com.spring.javaGroupS.vo.DbProductVO">
+    select * from categoryMain order by categoryMainCode desc;
+  </select>
+  
+  <select id="getCategoryMiddle" resultType="com.spring.javaGroupS.vo.DbProductVO">
+    select middle.*, main.categoryMainName from categoryMiddle middle, categoryMain main
+    where middle.categoryMainCode=main.categoryMainCode
+    order by categoryMiddleCode desc;
+  </select>
+  
+  <select id="getCategoryMiddleName" resultType="com.spring.javaGroupS.vo.DbProductVO">
+    select * from categoryMiddle where categoryMainCode = #{categoryMainCode};
+  </select>
+  
+  <select id="getProductMaxIdx" resultType="com.spring.javaGroupS.vo.DbProductVO">
+    select * from dbProduct order by idx desc limit 1;
+  </select>
+	
+  <select id="getCategorySub" resultType="com.spring.javaGroupS.vo.DbProductVO">
+    select sub.*, main.categoryMainCode, main.categoryMainName, middle.categoryMiddleCode, middle.categoryMiddleName from categorySub sub, categoryMiddle middle, categoryMain main
+    where sub.categoryMainCode=main.categoryMainCode and sub.categoryMiddleCode=middle.categoryMiddleCode
+    order by categorySubCode desc;
+  </select>
+  
+  <select id="getCategorySubName" resultType="com.spring.javaGroupS.vo.DbProductVO">
+    select * from categorySub where categoryMainCode = #{categoryMainCode} and categoryMiddleCode = #{categoryMiddleCode}; 
+  </select>
+  
+  <select id="getCategoryProductName" resultType="com.spring.javaGroupS.vo.DbProductVO">
+    select * from dbProduct 
+    where categoryMainCode = #{vo.categoryMainCode} and categoryMiddleCode = #{vo.categoryMiddleCode} and categorySubCode = #{vo.categorySubCode}; 
+  </select>
+  
+  <select id="getSubTitle" resultType="com.spring.javaGroupS.vo.DbProductVO">
+  	select categorySubName from categorySub group by categorySubName order by categorySubName;
+  </select>
+  
+	<select id="getDbShopList" resultType="com.spring.javaGroupS.vo.DbProductVO">
+	  <if test='part == "전체"'>
+	    select * from dbProduct <if test='mainPrice != 0'>where <![CDATA[mainPrice < #{mainPrice}]]></if> order by idx desc;
+	 	</if>
+	  <if test='part != "전체"'>
+	 		select product.*, sub.categorySubName from dbProduct product, categorySub sub 
+	 		  where sub.categorySubName = #{part} and substring(product.productCode,4,3)=sub.categorySubCode <if test='mainPrice != 0'>and <![CDATA[mainPrice < #{mainPrice}]]></if> order by idx desc;
+	 	</if>
+	</select>
+	
+  <select id="getCategoryProductNameOne" resultType="com.spring.javaGroupS.vo.DbProductVO">
+    select * from dbProduct where productName = #{productName}; 
+  </select>
+  
+  <select id="getCategoryProductNameOneVO" resultType="com.spring.javaGroupS.vo.DbProductVO">
+    select *,(select categoryMainName from categoryMain where categoryMainCode=#{vo.categoryMainCode}) as categoryMainName,
+      (select categoryMiddleName from categoryMiddle where categoryMiddleCode=#{vo.categoryMiddleCode}) as categoryMiddleName,
+      (select categorySubName from categorySub where categorySubCode=#{vo.categorySubCode}) as categorySubName
+      from dbProduct where productName = #{vo.productName}; 
+  </select>
+  
+  <select id="getCategoryProductNameAjax" resultType="com.spring.javaGroupS.vo.DbProductVO">
+  	select * from dbProduct
+  	where categoryMainCode=#{categoryMainCode} and categoryMiddleCode=#{categoryMiddleCode} and categorySubCode=#{categorySubCode};
+  </select>
+  
+  <select id="getProductInfor" resultType="com.spring.javaGroupS.vo.DbProductVO">
+  	select product.*, main.categoryMainName, middle.categoryMiddleName, (select categorySubName from categorySub where categorySubCode=product.categorySubCode) as categorySubName
+  	from dbProduct product, categoryMain main, categoryMiddle middle, categorySub sub
+  	where productName=#{productName} order by idx limit 1;
+  </select>
+  
+  <select id="getOptionList" resultType="com.spring.javaGroupS.vo.DbOptionVO">
+  	select * from dbOption where productIdx = #{productIdx} order by optionName;
+  </select>
+  
+  <select id="getOptionSame" resultType="int">
+    select count(*) from dbOption where productIdx=#{productIdx} and optionName=#{optionName};
+  </select>
+
+	<select id="getDbShopProduct" resultType="com.spring.javaGroupS.vo.DbProductVO">
+	  select * from dbProduct where idx = #{idx};
+	</select>
+
+  <select id="getDbShopOption" resultType="com.spring.javaGroupS.vo.DbOptionVO">
+  	select * from dbOption where productIdx = #{idx} order by idx;
+  </select>
+  
+  <select id="getDbCartProductOptionSearch" resultType="com.spring.javaGroupS.vo.DbCartVO">
+  	select * from dbCart where productName=#{productName} and optionName=#{optionName} and mid=#{mid};
+  </select>
+  
+  <select id="getDbCartList" resultType="com.spring.javaGroupS.vo.DbCartVO">
+  	select * from dbCart where mid=#{mid} order by idx;
+  </select>
+  
+  <select id="getOrderMaxIdx" resultType="com.spring.javaGroupS.vo.DbOrderVO">
+  	select max(idx) as maxIdx from dbOrder;
+  </select>
+  
+  <select id="getCartIdx" resultType="com.spring.javaGroupS.vo.DbCartVO">
+  	select * from dbCart where idx = #{idx};
+  </select>
+  
+  <select id="getTotalBaesongOrder" resultType="int">
+    select orderTotalPrice from dbBaesong where orderIdx = #{orderIdx};
+  </select>
+  
+  <select id="getOrderBaesong" resultType="com.spring.javaGroupS.vo.DbBaesongVO">
+    select * from dbBaesong where orderIdx = #{orderIdx};
+  </select>
+  
+  <select id="getMyOrderList" resultType="com.spring.javaGroupS.vo.DbBaesongVO">
+    <if test='mid == "전체"'>
+      SELECT oder.*,baesong.* from dbOrder oder join dbBaesong baesong using(orderIdx) 
+      where date(orderDate) = substring(now(),1,10) order by baesong.idx desc limit #{startIndexNo},#{pageSize};
+    </if>
+    <if test='mid != "전체"'>
+      SELECT oder.*,baesong.* from dbOrder oder join dbBaesong baesong using(orderIdx) 
+      where baesong.mid=#{mid} and date(orderDate) = substring(now(),1,10) order by baesong.idx desc limit #{startIndexNo},#{pageSize};
+    </if>
+  </select>
+  
+  
+
+  
+  <insert id="setDbProductInput">
+    insert into dbProduct value (#{vo.idx},#{vo.categoryMainCode},#{vo.categoryMiddleCode},#{vo.categorySubCode},#{vo.productCode},#{vo.productName},#{vo.detail},#{vo.mainPrice},#{vo.fSName},#{vo.content});
+  </insert>
+
+  <insert id="setDbOptionInput">
+    insert into dbOption values (default,#{vo.productIdx},#{vo.optionName},#{vo.optionPrice});
+  </insert>
+  
+  <insert id="dbShopCartInput">
+    insert into dbCart values (default,default,#{vo.mid},#{vo.productIdx},#{vo.productName},#{vo.mainPrice},#{vo.thumbImg},#{vo.optionIdx},#{vo.optionName},#{vo.optionPrice},#{vo.optionNum},#{vo.totalPrice});
+  </insert>
+  
+  <insert id="setDbOrder">
+    <!-- insert into dbOrder values (#{vo.idx},#{vo.orderIdx},#{vo.mid},#{vo.productIdx},default,#{vo.productName},#{vo.mainPrice},#{vo.thumbImg},#{vo.optionName},#{vo.optionPrice},#{vo.optionNum},#{vo.totalPrice}); -->
+    insert into dbOrder values (default,#{vo.orderIdx},#{vo.mid},#{vo.productIdx},default,#{vo.productName},#{vo.mainPrice},#{vo.thumbImg},#{vo.optionName},#{vo.optionPrice},#{vo.optionNum},#{vo.totalPrice});
+  </insert>
+  
+  <insert id="setDbBaesong">
+    insert into dbBaesong values (default,#{baesongVO.oIdx},#{baesongVO.orderIdx},#{baesongVO.orderTotalPrice},#{baesongVO.mid},#{baesongVO.name},#{baesongVO.address},#{baesongVO.tel},#{baesongVO.message},#{baesongVO.payment},#{baesongVO.payMethod},default);
+  </insert>
+  
+  
+  
+  
+  <update id="dbShopCartUpdate">
+    update dbCart set optionNum=#{vo.optionNum},totalPrice=totalPrice+#{vo.totalPrice} where productName=#{vo.productName} and optionName=#{vo.optionName};
+  </update>
+  
+  <update id="setMemberPointPlus">
+    update member set point = point + #{point} where mid = #{mid};
+  </update>
+  
+  
+  
+  <delete id="setOptionDelete">
+    delete from dbOption where idx = #{idx};
+  </delete>
+  
+  <delete id="dbCartDelete">
+  	delete from dbCart where idx = #{idx};
+  </delete>
+  
+  <delete id="setDbCartDeleteAll">
+    delete from dbCart where idx = #{cartIdx};
+  </delete>
+  
+	
+</mapper>

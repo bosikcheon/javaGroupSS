@@ -4,7 +4,9 @@
 	xmlns:beans="http://www.springframework.org/schema/beans"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:task="http://www.springframework.org/schema/task"
 	xsi:schemaLocation="http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd
 		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
@@ -28,6 +30,7 @@
 	<resources mapping="/thumbnail/**" location="/resources/data/thumbnail/" />
 	<resources mapping="/qrcode/**" location="/resources/data/qrcode/" />
 	<resources mapping="/captcha/**" location="/resources/data/captcha/" />
+	<resources mapping="/product/**" location="/resources/data/dbShop/product/" />
 
 	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
 	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -39,7 +42,7 @@
 	
 	<!-- 파일 업로드에 필요한 라이브러리 객체 been등록(최대 저장 용량 제한, 한글처리) -->
 	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-		<beans:property name="maxUploadSize" value="3145728" />
+		<beans:property name="maxUploadSize" value="31457280" />
 		<beans:property name="defaultEncoding" value="utf-8" />
 	</beans:bean>
 	
@@ -48,5 +51,9 @@
 	
 	<!-- 트랜젝션을 어노테이션으로 처리하기위한 클래스 등록 -->
 	<tx:annotation-driven transaction-manager="transactionManager" />
+	
+	<!-- 스프링 스케줄러 등록 -->
+	<task:scheduler id="jobScheduler" pool-size="10" />
+	<task:annotation-driven scheduler="jobScheduler"/>
 	
 </beans:beans>

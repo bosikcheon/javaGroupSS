@@ -103,7 +103,7 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	public String getFileUpload(MultipartFile fName, String mid) {
-		String oFileName = fName.getOriginalFilename();
+//		String oFileName = fName.getOriginalFilename();
 		
 		return null;
 	}

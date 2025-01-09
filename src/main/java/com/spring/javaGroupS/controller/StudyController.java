@@ -48,7 +48,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.javaGroupS.service.BoardService;
 import com.spring.javaGroupS.service.DbtestService;
@@ -59,6 +58,7 @@ import com.spring.javaGroupS.vo.BoardVO;
 import com.spring.javaGroupS.vo.ChartVO;
 import com.spring.javaGroupS.vo.CrawLingVO;
 import com.spring.javaGroupS.vo.CrimeVO;
+import com.spring.javaGroupS.vo.DbPayMentVO;
 import com.spring.javaGroupS.vo.KakaoAddressVO;
 import com.spring.javaGroupS.vo.MailVO;
 import com.spring.javaGroupS.vo.MemberVO;
@@ -1104,8 +1104,8 @@ public class StudyController {
 	
 	@RequestMapping(value = "/infiniteScroll/infiniteScroll", method = RequestMethod.GET)
 	public String infiniteScrollGet(Model model,
-			@RequestParam(name="pag", defaultValue = "1", required = false) int pag, 
-			@RequestParam(name="pageSize", defaultValue = "3", required = false) int pageSize
+		  @RequestParam(name="pag", defaultValue = "1", required = false) int pag,	
+		  @RequestParam(name="pageSize", defaultValue = "3", required = false) int pageSize	
 		) {
 		int startIndexNo = (pag - 1) * pageSize;
 		List<BoardVO> vos = boardService.getBoardList(startIndexNo, pageSize);
@@ -1113,10 +1113,12 @@ public class StudyController {
 		return "study/infiniteScroll/infiniteScroll";
 	}
 	
+	/*
+	@ResponseBody
 	@RequestMapping(value = "/infiniteScroll/infiniteScrollPaging", method = RequestMethod.POST)
 	public ModelAndView infiniteScrollPagingPost(Model model,
-			@RequestParam(name="pag", defaultValue = "1", required = false) int pag, 
-			@RequestParam(name="pageSize", defaultValue = "3", required = false) int pageSize
+			@RequestParam(name="pag", defaultValue = "1", required = false) int pag,	
+			@RequestParam(name="pageSize", defaultValue = "3", required = false) int pageSize	
 			) {
 		int startIndexNo = (pag - 1) * pageSize;
 		List<BoardVO> vos = boardService.getBoardList(startIndexNo, pageSize);
@@ -1124,6 +1126,51 @@ public class StudyController {
 		
 		ModelAndView mv = new ModelAndView();
 		mv.setViewName("study/infiniteScroll/infiniteScrollPaging");
+		
 		return mv;
 	}
+	*/
+
+//	AJAX에서 JSP 파일을 요청하고, 그 결과를 직접 클라이언트에 렌더링하려면, @ResponseBody는 필요하지 않습니다.
+//	만약 AJAX가 서버로부터 JSON 데이터를 받아서 처리하려고 한다면, 이 경우 @ResponseBody가 필요합니다.
+//	JSP 파일을 직접 반환하는 경우: @ResponseBody는 필요 없으며, 그냥 return "example.jsp";와 같이 반환하면 됩니다.
+//	JSON 데이터나 다른 형식의 응답을 반환하는 경우: @ResponseBody를 사용하여 데이터를 JSON으로 반환해야 합니다.
+	@RequestMapping(value = "/infiniteScroll/infiniteScrollPaging", method = RequestMethod.POST)
+	public String infiniteScrollPagingPost(Model model,
+			@RequestParam(name="pag", defaultValue = "1", required = false) int pag,	
+			@RequestParam(name="pageSize", defaultValue = "3", required = false) int pageSize	
+		) {
+		int startIndexNo = (pag - 1) * pageSize;
+		List<BoardVO> vos = boardService.getBoardList(startIndexNo, pageSize);
+		model.addAttribute("vos", vos);
+		
+//		ModelAndView mv = new ModelAndView();
+//		mv.setViewName("study/infiniteScroll/infiniteScrollPaging");
+		
+		return "study/infiniteScroll/infiniteScrollPaging";
+	}
+	
+	// 결제 연습폼
+	@RequestMapping(value = "/payment/payment", method = RequestMethod.GET)
+	public String paymentGet() {
+		return "study/payment/payment";
+	}
+	
+	// 결제 연습 처리하기
+	@RequestMapping(value = "/payment/payment", method = RequestMethod.POST)
+	public String paymentPost(DbPayMentVO vo, Model model, HttpSession session) {
+		session.setAttribute("sPayMentVO", vo);
+		model.addAttribute("vo", vo);
+		return "study/payment/sample";
+	}
+	
+	// 결제처리완료후 결제내역을 확인하는 화면...
+  @RequestMapping(value = "/payment/paymentOk", method = RequestMethod.GET)
+  public String paymentOkGet(Model model, HttpSession session) {
+  	DbPayMentVO vo = (DbPayMentVO) session.getAttribute("sPayMentVO");
+  	model.addAttribute("vo", vo);
+  	
+  	session.removeAttribute("sPayMentVO");
+  	return "study/payment/paymentOk";
+  }
 }

@@ -14,6 +14,7 @@ public class MessageController {
 	public String getMessage(Model model, 
 			@PathVariable String msgFlag,
 			@RequestParam(name="mid", defaultValue = "", required = false) String mid,
+			@RequestParam(name="tempFlag", defaultValue = "", required = false) String tempFlag,
 			@RequestParam(name="idx", defaultValue = "0", required = false) int idx,
 			@RequestParam(name="pag", defaultValue = "1", required = false) int pag,
 			@RequestParam(name="pageSize", defaultValue = "10", required = false) int pageSize,
@@ -280,7 +281,30 @@ public class MessageController {
 			model.addAttribute("message", "설문지 주항목 제목이 수정되었습니다.");
 			model.addAttribute("url", "survey/surveyUpdate?idx="+idx);
 		}
-		
+		else if(msgFlag.equals("dbProductInputOk")) {
+			model.addAttribute("message", "상품이 등록되었습니다.");
+			model.addAttribute("url", "dbShop/dbShopList");
+		}
+		else if(msgFlag.equals("dbProductInputNo")) {
+			model.addAttribute("message", "상품 등록 실패~~");
+			model.addAttribute("url", "dbShop/dbProduct");
+		}
+		else if(msgFlag.equals("dbOptionInputOk")) {
+			model.addAttribute("message", "옵션항목이 등록되었습니다.");
+			model.addAttribute("url", "dbShop/dbOption?productName="+tempFlag);
+		}
+		else if(msgFlag.equals("dbOptionInputNo")) {
+			model.addAttribute("message", "옵션항목 등록 실패~~");
+			model.addAttribute("url", "dbShop/dbOption?productName="+tempFlag);
+		}
+		else if(msgFlag.equals("cartEmpty")) {
+			model.addAttribute("message", "장바구니가 비어있습니다.");
+			model.addAttribute("url", "dbShop/dbProductList");
+		}
+		else if(msgFlag.equals("paymentResultOk")) {
+			model.addAttribute("message", "결재가 성공적으로 완료되었습니다.");
+			model.addAttribute("url", "dbShop/paymentResultOk");
+		}
 		
 		
 		return "include/message";

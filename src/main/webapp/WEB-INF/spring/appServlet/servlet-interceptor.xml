@@ -39,6 +39,7 @@
 				<mapping path="/study/**"/>
 				<mapping path="/user/**"/>
 				<mapping path="/dbtest/**"/>
+				<mapping path="/dbShop/**"/>
 				<mapping path="/pds/pdsList"/>
 				<mapping path="/member/memberList"/>
 				<exclude-mapping path="/board/boardList"/>
