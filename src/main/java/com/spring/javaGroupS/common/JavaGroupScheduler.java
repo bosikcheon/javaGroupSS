@@ -24,7 +24,7 @@ public class JavaGroupScheduler {
 		Date today = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String strToday = sdf.format(today);
-		System.out.println("10초에 메세지가 출력됩니다." + strToday);
+		System.out.println("10초에 메세지가 출력됩니다....." + strToday);
 	}
 	
 	//@Scheduled(cron = "0/10 * * * * *")
