@@ -18,7 +18,7 @@
     'use strict';
     
     // 카카오 로그인앱키
-  	window.Kakao.init("158c673636c9a17a27b67c95f2c6be5c");
+  	window.Kakao.init("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
   	
     function kakaoLogin() {
     	window.Kakao.Auth.login({

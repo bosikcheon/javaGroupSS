@@ -26,12 +26,12 @@
 	  }
   }
   
-  window.Kakao.init("158c673636c9a17a27b67c95f2c6be5c");
+  window.Kakao.init("xxxxxxxxxxx");
   function kakaoLogout() {
 	  const accessToken = Kakao.Auth.getAccessToken();
 	  if(accessToken) {
 		  Kakao.Auth.logout(function() {
-			  window.location.href = "https://kauth.kakao.com/oauth/logout?client_id=158c673636c9a17a27b67c95f2c6be5c&logout_redirect_uri=http://localhost:9090/javaGroupS/member/memberLogout";
+			  window.location.href = "https://kauth.kakao.com/oauth/logout?client_id=xxxxxxxxxxxxxxxxxxxxxxxxx&logout_redirect_uri=http://localhost:9090/javaGroupS/member/memberLogout";
 		  });
 	  }
   }

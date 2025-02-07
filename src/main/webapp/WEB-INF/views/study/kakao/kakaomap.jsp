@@ -17,7 +17,7 @@
   <div id="map" style="width:100%;height:500px;"></div>
   
   <!-- 카카오맵.... -->
-  <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=158c673636c9a17a27b67c95f2c6be5c"></script>
+  <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=xxxxxxxxxxxxxxxxxxxxxxx"></script>
 	<script>
 		// 지도 생성
 	  var container = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스

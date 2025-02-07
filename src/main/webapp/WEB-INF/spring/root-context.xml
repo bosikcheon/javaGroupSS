@@ -16,9 +16,9 @@
 	<!-- 데이터베이스 연동을 위한 환경설정(JDBC설정) -->
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="jdbc:mysql://localhost:3306/javagroup?allowMultiQueries=true" />
-		<property name="username" value="root" />
-		<property name="password" value="1234" />
+		<property name="url" value="jdbc:mysql://localhost:3306/xxxxxxxxxx?allowMultiQueries=true" />
+		<property name="username" value="xxxxxxxx" />
+		<property name="password" value="xxxxxxxx" />
 	</bean>
 	
 	<!-- MyBatis 템플릿(SqlSessionFactory) 스프링 컨테이너에 등록 -->
@@ -41,8 +41,8 @@
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
 		<property name="host" value="smtp.gmail.com" />
 		<property name="port" value="587" />
-		<property name="username" value="cccbbbsss1126@gmail.com" />
-		<property name="password" value="sehfqrgytwufqtoe" />
+		<property name="username" value="xxxxxxxxxx" />
+		<property name="password" value="xxxxxxxxxxxx" />
 		<property name="javaMailProperties">
 			<props>
 				<prop key="mail.transport.protocol">smtp</prop>
